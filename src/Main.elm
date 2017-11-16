@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Date
 import Date.Extra.Duration as Duration
+import Debug
 import Html exposing (Attribute, Html, div, input, p, text)
 import Html.Attributes exposing (placeholder)
 import Html.Events exposing (onInput)
@@ -183,7 +184,7 @@ lineChart model =
             Just ( Scale.convert (xScale data) x, Scale.convert (yScale data) y )
 
         line =
-            d <| Shape.line Shape.monotoneInXCurve <| List.map scale <| data
+            d <| Shape.line Shape.linearCurve <| List.map scale <| data
     in
     Svg.svg [ width (toString w ++ "px"), height (toString h ++ "px") ]
         [ g [ transform ("translate(" ++ toString (padding - 1) ++ ", " ++ toString (h - padding) ++ ")") ]
@@ -202,35 +203,61 @@ lineChart model =
 accumulatedInterest : Model -> List ( Date.Date, Float )
 accumulatedInterest model =
     let
-        date =
+        startDate =
             orDefaultDate model.currentDate
+
+        endDate =
+            Duration.add Duration.Month model.months <| orDefaultDate model.currentDate
+
+        dataPoints =
+            100
+
+        days =
+            List.map (\t -> Duration.add Duration.Month t startDate) <|
+                if model.months < dataPoints then
+                    List.range 1 model.months
+                else
+                    List.append (every (model.months // dataPoints) <| List.range 1 model.months) (List.repeat (model.months % dataPoints) model.months)
     in
-    List.reverse <|
-        List.foldl
-            (\_ acc ->
-                case acc of
-                    ( t, v ) :: _ ->
-                        let
-                            nextDay =
-                                Duration.add Duration.Day 30 t
+    Debug.log (toString days) <|
+        List.reverse <|
+            List.foldl
+                (\nextDay acc ->
+                    case acc of
+                        ( t, v ) :: _ ->
+                            let
+                                dayDiff =
+                                    Duration.diffDays nextDay t
+                            in
+                            if t == nextDay then
+                                acc
+                            else
+                                ( nextDay, model.contribution + v * interestForDays dayDiff model.interest ) :: acc
 
-                            dayDiff =
-                                Duration.diffDays nextDay t
-                        in
-                        ( nextDay, model.contribution + v * interestForDays dayDiff model.interest )
-                            :: acc
+                        [] ->
+                            []
+                )
+                [ ( startDate, model.init ) ]
+                days
 
-                    [] ->
-                        []
-            )
-            [ ( date, model.init ) ]
-        <|
-            List.range 1 model.months
+
+every : Int -> List Int -> List Int
+every n lst =
+    case List.drop n lst of
+        x :: xs ->
+            x :: every n xs
+
+        _ ->
+            []
 
 
 interestForDays : Int -> Float -> Float
 interestForDays days yearlyPercentage =
-    ((yearlyPercentage / 100) + 1) ^ (toFloat days / 365)
+    let
+        i =
+            ((yearlyPercentage / 100) + 1) ^ (toFloat days / 365)
+    in
+    Debug.log ("Interest = " ++ toString i ++ " days = " ++ toString days) i
 
 
 orDefaultDate : Maybe Date.Date -> Date.Date
