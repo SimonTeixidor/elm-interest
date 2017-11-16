@@ -212,14 +212,10 @@ accumulatedInterest model =
         dataPoints =
             100
 
-        days =
-            List.map (\t -> Duration.add Duration.Month t startDate) <|
-                if model.months < dataPoints then
-                    List.range 1 model.months
-                else
-                    List.append (every (model.months // dataPoints) <| List.range 1 model.months) (List.repeat (model.months % dataPoints) model.months)
+        dates =
+            List.map (\n -> Duration.add Duration.Month n startDate) <| skipRange 1 model.months (max 1 (model.months // dataPoints))
     in
-    Debug.log (toString days) <|
+    Debug.log (toString dates) <|
         List.reverse <|
             List.foldl
                 (\nextDay acc ->
@@ -238,17 +234,19 @@ accumulatedInterest model =
                             []
                 )
                 [ ( startDate, model.init ) ]
-                days
+                dates
 
 
-every : Int -> List Int -> List Int
-every n lst =
-    case List.drop n lst of
-        x :: xs ->
-            x :: every n xs
-
-        _ ->
-            []
+skipRange : Int -> Int -> Int -> List Int
+skipRange begin end step =
+    let
+        range =
+            List.map ((*) step) <| List.range begin (end // step)
+    in
+    if (end - begin) % step == 0 then
+        range
+    else
+        List.append range [ end ]
 
 
 interestForDays : Int -> Float -> Float
