@@ -27,12 +27,12 @@ main =
 
 
 type alias Model =
-    { interest : Float, months : Int, init : Float, contribution : Float, currentDate : Maybe Date.Date }
+    { interest : Float, months : Int, init : Float, contribution : Float, currentDate : Date.Date }
 
 
 initialState : Model
 initialState =
-    { interest = 8, months = 1, init = 1000, contribution = 100, currentDate = Nothing }
+    { interest = 8, months = 1, init = 1000, contribution = 100, currentDate = Date.fromTime 0 }
 
 
 
@@ -83,7 +83,7 @@ update msg model =
                     ( model, Cmd.none )
 
         NewDate d ->
-            ( { model | currentDate = Just d }, Cmd.none )
+            ( { model | currentDate = d }, Cmd.none )
 
 
 
@@ -140,10 +140,10 @@ xScale lst =
             List.map Tuple.first lst
 
         maxVal =
-            orDefaultDate <| Maybe.map Date.fromTime <| List.maximum <| List.map Date.toTime xVals
+            Date.fromTime <| Maybe.withDefault 100 <| List.maximum <| List.map Date.toTime xVals
 
         minVal =
-            orDefaultDate <| Maybe.map Date.fromTime <| List.minimum <| List.map Date.toTime xVals
+            Date.fromTime <| Maybe.withDefault 0 <| List.minimum <| List.map Date.toTime xVals
     in
     Scale.time ( minVal, maxVal ) ( 0, w - 2 * padding )
 
@@ -202,17 +202,14 @@ lineChart model =
 accumulatedInterest : Model -> List ( Date.Date, Float )
 accumulatedInterest model =
     let
-        startDate =
-            orDefaultDate model.currentDate
-
         endDate =
-            Duration.add Duration.Month model.months <| orDefaultDate model.currentDate
+            Duration.add Duration.Month model.months model.currentDate
 
         dataPoints =
             100
 
         dates =
-            List.map (\n -> Duration.add Duration.Month n startDate) <| skipRange 1 model.months (max 1 (model.months // dataPoints))
+            List.map (\n -> Duration.add Duration.Month n model.currentDate) <| skipRange 1 model.months (max 1 (model.months // dataPoints))
     in
     List.reverse <|
         List.foldl
@@ -231,7 +228,7 @@ accumulatedInterest model =
                     [] ->
                         []
             )
-            [ ( startDate, model.init ) ]
+            [ ( model.currentDate, model.init ) ]
             dates
 
 
@@ -250,8 +247,3 @@ skipRange begin end step =
 interestForDays : Int -> Float -> Float
 interestForDays days yearlyPercentage =
     ((yearlyPercentage / 100) + 1) ^ (toFloat days / 365)
-
-
-orDefaultDate : Maybe Date.Date -> Date.Date
-orDefaultDate d =
-    Maybe.withDefault (Date.fromTime 0) d
