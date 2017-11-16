@@ -2,7 +2,6 @@ module Main exposing (..)
 
 import Date
 import Date.Extra.Duration as Duration
-import Debug
 import Html exposing (Attribute, Html, div, input, p, text)
 import Html.Attributes exposing (placeholder)
 import Html.Events exposing (onInput)
@@ -215,26 +214,25 @@ accumulatedInterest model =
         dates =
             List.map (\n -> Duration.add Duration.Month n startDate) <| skipRange 1 model.months (max 1 (model.months // dataPoints))
     in
-    Debug.log (toString dates) <|
-        List.reverse <|
-            List.foldl
-                (\nextDay acc ->
-                    case acc of
-                        ( t, v ) :: _ ->
-                            let
-                                dayDiff =
-                                    Duration.diffDays nextDay t
-                            in
-                            if t == nextDay then
-                                acc
-                            else
-                                ( nextDay, model.contribution + v * interestForDays dayDiff model.interest ) :: acc
+    List.reverse <|
+        List.foldl
+            (\nextDay acc ->
+                case acc of
+                    ( t, v ) :: _ ->
+                        let
+                            dayDiff =
+                                Duration.diffDays nextDay t
+                        in
+                        if t == nextDay then
+                            acc
+                        else
+                            ( nextDay, model.contribution + v * interestForDays dayDiff model.interest ) :: acc
 
-                        [] ->
-                            []
-                )
-                [ ( startDate, model.init ) ]
-                dates
+                    [] ->
+                        []
+            )
+            [ ( startDate, model.init ) ]
+            dates
 
 
 skipRange : Int -> Int -> Int -> List Int
@@ -251,11 +249,7 @@ skipRange begin end step =
 
 interestForDays : Int -> Float -> Float
 interestForDays days yearlyPercentage =
-    let
-        i =
-            ((yearlyPercentage / 100) + 1) ^ (toFloat days / 365)
-    in
-    Debug.log ("Interest = " ++ toString i ++ " days = " ++ toString days) i
+    ((yearlyPercentage / 100) + 1) ^ (toFloat days / 365)
 
 
 orDefaultDate : Maybe Date.Date -> Date.Date
