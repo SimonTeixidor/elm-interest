@@ -3,7 +3,7 @@ module Main exposing (..)
 import Date
 import Date.Extra.Duration as Duration
 import Html exposing (Attribute, Html, div, input, p, text)
-import Html.Attributes exposing (placeholder)
+import Html.Attributes exposing (maxlength, placeholder)
 import Html.Events exposing (onInput)
 import Svg exposing (g, svg)
 import Svg.Attributes exposing (class, d, fill, height, stroke, strokeWidth, transform, width)
@@ -112,7 +112,7 @@ view model =
         , p
             []
             [ text "Duration (years): "
-            , input [ placeholder <| toString initialState.years, onInput Duration ] []
+            , input [ placeholder <| toString initialState.years, onInput Duration, maxlength 4 ] []
             ]
         , lineChart model
         ]
@@ -201,47 +201,17 @@ lineChart model =
 
 accumulatedInterest : Model -> List ( Date.Date, Float )
 accumulatedInterest model =
-    let
-        endDate =
-            Duration.add Duration.Month model.years model.currentDate
-
-        dataPoints =
-            100
-    in
     List.reverse <|
         List.foldl
-            (\_ acc ->
+            (\nextDay acc ->
                 case acc of
                     ( t, v ) :: _ ->
-                        let
-                            dayDiff =
-                                Duration.diffDays nextDay t
-
-                            nextDay =
-                                Duration.add Duration.Month 1 t
-                        in
-                        ( nextDay, model.contribution + v * interestForDays dayDiff model.interest ) :: acc
+                        ( nextDay, model.contribution * 12 + v * (1 + model.interest / 100) ) :: acc
 
                     [] ->
                         []
             )
             [ ( model.currentDate, model.init ) ]
         <|
-            List.range 1 (model.years * 12)
-
-
-skipRange : Int -> Int -> Int -> List Int
-skipRange begin end step =
-    let
-        range =
-            List.map ((*) step) <| List.range begin (end // step)
-    in
-    if (end - begin) % step == 0 then
-        range
-    else
-        List.append range [ end ]
-
-
-interestForDays : Int -> Float -> Float
-interestForDays days yearlyPercentage =
-    ((yearlyPercentage / 100) + 1) ^ (toFloat days / 365)
+            List.map (\i -> Duration.add Duration.Year i model.currentDate) <|
+                List.range 1 model.years
