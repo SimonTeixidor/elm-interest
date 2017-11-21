@@ -27,12 +27,12 @@ main =
 
 
 type alias Model =
-    { interest : Float, months : Int, init : Float, contribution : Float, currentDate : Date.Date }
+    { interest : Float, years : Int, init : Float, contribution : Float, currentDate : Date.Date }
 
 
 initialState : Model
 initialState =
-    { interest = 8, months = 1, init = 1000, contribution = 100, currentDate = Date.fromTime 0 }
+    { interest = 8, years = 10, init = 1000, contribution = 100, currentDate = Date.fromTime 0 }
 
 
 
@@ -69,7 +69,7 @@ update msg model =
         Duration s ->
             case String.toInt s of
                 Ok i ->
-                    ( { model | months = i }, Cmd.none )
+                    ( { model | years = i }, Cmd.none )
 
                 Err e ->
                     ( model, Cmd.none )
@@ -111,8 +111,8 @@ view model =
             ]
         , p
             []
-            [ text "Duration (months): "
-            , input [ placeholder <| toString initialState.months, onInput Duration ] []
+            [ text "Duration (years): "
+            , input [ placeholder <| toString initialState.years, onInput Duration ] []
             ]
         , lineChart model
         ]
@@ -203,33 +203,31 @@ accumulatedInterest : Model -> List ( Date.Date, Float )
 accumulatedInterest model =
     let
         endDate =
-            Duration.add Duration.Month model.months model.currentDate
+            Duration.add Duration.Month model.years model.currentDate
 
         dataPoints =
             100
-
-        dates =
-            List.map (\n -> Duration.add Duration.Month n model.currentDate) <| skipRange 1 model.months (max 1 (model.months // dataPoints))
     in
     List.reverse <|
         List.foldl
-            (\nextDay acc ->
+            (\_ acc ->
                 case acc of
                     ( t, v ) :: _ ->
                         let
                             dayDiff =
                                 Duration.diffDays nextDay t
+
+                            nextDay =
+                                Duration.add Duration.Month 1 t
                         in
-                        if t == nextDay then
-                            acc
-                        else
-                            ( nextDay, model.contribution + v * interestForDays dayDiff model.interest ) :: acc
+                        ( nextDay, model.contribution + v * interestForDays dayDiff model.interest ) :: acc
 
                     [] ->
                         []
             )
             [ ( model.currentDate, model.init ) ]
-            dates
+        <|
+            List.range 1 (model.years * 12)
 
 
 skipRange : Int -> Int -> Int -> List Int
