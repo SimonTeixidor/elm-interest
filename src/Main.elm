@@ -209,9 +209,32 @@ accumulatedInterest model =
             model.interest / 100
 
         compoundInterest y =
-            model.init * (1 + (interest / compoundPerYear)) ^ (compoundPerYear * toFloat y)
+            model.init * (1 + (interest / compoundPerYear)) ^ (compoundPerYear * y)
 
         futureValueOfSeries y =
-            model.contribution * (((1 + interest / compoundPerYear) ^ (compoundPerYear * toFloat y) - 1) / (interest / compoundPerYear))
+            model.contribution
+                * (((1 + interest / compoundPerYear) ^ (compoundPerYear * y) - 1)
+                    / (interest / compoundPerYear)
+                  )
+
+        resolution =
+            100
+
+        yearStep =
+            toFloat model.years / toFloat resolution
+
+        dateInYears years =
+            Duration.add Duration.Day (floor (years * 365)) model.currentDate
     in
-    List.map (\i -> ( Duration.add Duration.Year i model.currentDate, compoundInterest i + futureValueOfSeries i )) <| List.range 0 model.years
+    List.map
+        (\i ->
+            let
+                y =
+                    toFloat i * yearStep
+            in
+            ( dateInYears y
+            , compoundInterest y + futureValueOfSeries y
+            )
+        )
+    <|
+        List.range 0 resolution
