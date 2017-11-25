@@ -201,17 +201,17 @@ lineChart model =
 
 accumulatedInterest : Model -> List ( Date.Date, Float )
 accumulatedInterest model =
-    List.reverse <|
-        List.foldl
-            (\nextDay acc ->
-                case acc of
-                    ( t, v ) :: _ ->
-                        ( nextDay, model.contribution * 12 + v * (1 + model.interest / 100) ) :: acc
+    let
+        compoundPerYear =
+            12
 
-                    [] ->
-                        []
-            )
-            [ ( model.currentDate, model.init ) ]
-        <|
-            List.map (\i -> Duration.add Duration.Year i model.currentDate) <|
-                List.range 1 model.years
+        interest =
+            model.interest / 100
+
+        compoundInterest y =
+            model.init * (1 + (interest / compoundPerYear)) ^ (compoundPerYear * toFloat y)
+
+        futureValueOfSeries y =
+            model.contribution * (((1 + interest / compoundPerYear) ^ (compoundPerYear * toFloat y) - 1) / (interest / compoundPerYear))
+    in
+    List.map (\i -> ( Duration.add Duration.Year i model.currentDate, compoundInterest i + futureValueOfSeries i )) <| List.range 0 model.years
