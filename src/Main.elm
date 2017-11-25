@@ -119,42 +119,31 @@ view model =
 -- LOGIC
 
 
+compoundInterest p r n y =
+    p * (1 + (r / n)) ^ (n * y)
+
+
+futureValueOfSeries c r n y =
+    c * (((1 + r / n) ^ (n * y) - 1) / (r / n))
+
+
+futureBalance startingPrinciple monthlyContribution interest compounds years =
+    compoundInterest startingPrinciple interest compounds years
+        + futureValueOfSeries monthlyContribution interest compounds years
+
+
 accumulatedInterest : Model -> List ( Date.Date, Float )
 accumulatedInterest model =
     let
-        compoundPerYear =
-            12
-
-        interest =
-            model.interest / 100
-
-        compoundInterest y =
-            model.init * (1 + (interest / compoundPerYear)) ^ (compoundPerYear * y)
-
-        futureValueOfSeries y =
-            model.contribution
-                * (((1 + interest / compoundPerYear) ^ (compoundPerYear * y) - 1)
-                    / (interest / compoundPerYear)
-                  )
-
         resolution =
             100
 
-        yearStep =
-            toFloat model.years / toFloat resolution
+        years =
+            List.range 0 100 |> List.map toFloat |> List.map ((*) (toFloat model.years / resolution))
 
-        dateInYears years =
-            Duration.add Duration.Day (floor (years * 365)) model.currentDate
+        dateAfterYears y =
+            Duration.add Duration.Day (floor (y * 365)) model.currentDate
     in
-    List.map
-        (\i ->
-            let
-                y =
-                    toFloat i * yearStep
-            in
-            ( dateInYears y
-            , compoundInterest y + futureValueOfSeries y
-            )
-        )
-    <|
-        List.range 0 resolution
+    List.map2 (,)
+        (List.map dateAfterYears years)
+        (List.map (futureBalance model.init model.contribution (model.interest / 100) 12) years)
