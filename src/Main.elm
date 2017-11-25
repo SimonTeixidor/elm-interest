@@ -5,12 +5,8 @@ import Date.Extra.Duration as Duration
 import Html exposing (Attribute, Html, div, input, p, text)
 import Html.Attributes exposing (maxlength, placeholder)
 import Html.Events exposing (onInput)
-import Svg exposing (g, svg)
-import Svg.Attributes exposing (class, d, fill, height, stroke, strokeWidth, transform, width)
+import LineChart exposing (lineChart)
 import Task
-import Visualization.Axis as Axis exposing (defaultOptions)
-import Visualization.Scale as Scale exposing (ContinuousScale, ContinuousTimeScale)
-import Visualization.Shape as Shape
 
 
 main =
@@ -112,86 +108,10 @@ view model =
         , p
             []
             [ text "Duration (years): "
-            , input [ placeholder <| toString initialState.years, onInput Duration, maxlength 4 ] []
+            , input [ placeholder <| toString initialState.years, onInput Duration, maxlength 3 ] []
             ]
-        , lineChart model
-        ]
-
-
-w : Float
-w =
-    900
-
-
-h : Float
-h =
-    450
-
-
-padding : Float
-padding =
-    100
-
-
-xScale : List ( Date.Date, Float ) -> ContinuousTimeScale
-xScale lst =
-    let
-        xVals =
-            List.map Tuple.first lst
-
-        maxVal =
-            Date.fromTime <| Maybe.withDefault 100 <| List.maximum <| List.map Date.toTime xVals
-
-        minVal =
-            Date.fromTime <| Maybe.withDefault 0 <| List.minimum <| List.map Date.toTime xVals
-    in
-    Scale.time ( minVal, maxVal ) ( 0, w - 2 * padding )
-
-
-yScale : List ( Date.Date, Float ) -> ContinuousScale
-yScale lst =
-    let
-        yVals =
-            List.map Tuple.second lst
-
-        maxVal =
-            Maybe.withDefault 0 <| List.maximum yVals
-
-        minVal =
-            Maybe.withDefault 0 <| List.minimum yVals
-    in
-    Scale.linear ( minVal / 1.2, maxVal * 1.2 ) ( h - 2 * padding, 0 )
-
-
-xAxis : List ( Date.Date, Float ) -> Svg.Svg msg
-xAxis lst =
-    Axis.axis { defaultOptions | orientation = Axis.Bottom, tickCount = 5 } <| xScale lst
-
-
-yAxis : List ( Date.Date, Float ) -> Svg.Svg msg
-yAxis lst =
-    Axis.axis { defaultOptions | orientation = Axis.Left, tickCount = 10 } <| yScale lst
-
-
-lineChart : Model -> Html msg
-lineChart model =
-    let
-        data =
-            accumulatedInterest model
-
-        scale ( x, y ) =
-            Just ( Scale.convert (xScale data) x, Scale.convert (yScale data) y )
-
-        line =
-            d <| Shape.line Shape.linearCurve <| List.map scale <| data
-    in
-    Svg.svg [ width (toString w ++ "px"), height (toString h ++ "px") ]
-        [ g [ transform ("translate(" ++ toString (padding - 1) ++ ", " ++ toString (h - padding) ++ ")") ]
-            [ xAxis data ]
-        , g [ transform ("translate(" ++ toString (padding - 1) ++ ", " ++ toString padding ++ ")") ]
-            [ yAxis data ]
-        , g [ transform ("translate(" ++ toString padding ++ ", " ++ toString padding ++ ")"), class "series" ]
-            [ Svg.path [ line, stroke "red", strokeWidth "3px", fill "none" ] [] ]
+        , p [] [ text ("Final balance: " ++ toString (List.maximum <| List.map Tuple.second <| accumulatedInterest model)) ]
+        , lineChart <| accumulatedInterest model
         ]
 
 
