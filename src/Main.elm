@@ -127,11 +127,6 @@ futureValueOfSeries c r n y =
     c * (((1 + r / n) ^ (n * y) - 1) / (r / n))
 
 
-futureBalance startingPrinciple monthlyContribution interest compounds years =
-    compoundInterest startingPrinciple interest compounds years
-        + futureValueOfSeries monthlyContribution interest compounds years
-
-
 accumulatedInterest : Model -> List ( Date.Date, Float )
 accumulatedInterest model =
     let
@@ -139,11 +134,17 @@ accumulatedInterest model =
             100
 
         years =
-            List.range 0 100 |> List.map toFloat |> List.map ((*) (toFloat model.years / resolution))
+            List.range 0 100
+                |> List.map toFloat
+                |> List.map ((*) (toFloat model.years / resolution))
 
         dateAfterYears y =
             Duration.add Duration.Day (floor (y * 365)) model.currentDate
+
+        interest =
+            model.interest / 100
     in
-    List.map2 (,)
+    List.map3 (\date interest contribution -> ( date, contribution + interest ))
         (List.map dateAfterYears years)
-        (List.map (futureBalance model.init model.contribution (model.interest / 100) 12) years)
+        (List.map (compoundInterest model.init interest 12) years)
+        (List.map (futureValueOfSeries model.contribution interest 12) years)
