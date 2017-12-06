@@ -27,7 +27,9 @@ type alias Model =
     , years : Int
     , initialPrincipal : Float
     , contribution : Float
+    , contributionGrowthRate : Float
     , currentDate : Date.Date
+    , compoundingPerYear : Float
     }
 
 
@@ -37,7 +39,9 @@ initialState =
     , years = 10
     , initialPrincipal = 1000
     , contribution = 100
+    , contributionGrowthRate = 3
     , currentDate = Date.fromTime 0
+    , compoundingPerYear = 12
     }
 
 
@@ -51,6 +55,7 @@ type Msg
     | Duration String
     | Contribution String
     | NewDate Date.Date
+    | ContributionRate String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -91,6 +96,14 @@ update msg model =
         NewDate d ->
             ( { model | currentDate = d }, Cmd.none )
 
+        ContributionRate s ->
+            case String.toFloat s of
+                Ok f ->
+                    ( { model | contributionGrowthRate = f }, Cmd.none )
+
+                Err e ->
+                    ( model, Cmd.none )
+
 
 
 -- VIEW
@@ -117,6 +130,11 @@ view model =
             ]
         , p
             []
+            [ text "Contribution Growth: "
+            , input [ placeholder <| toString initialState.contributionGrowthRate ++ " %", onInput ContributionRate ] []
+            ]
+        , p
+            []
             [ text "Duration (years): "
             , input [ placeholder <| toString initialState.years, onInput Duration, maxlength 3 ] []
             ]
@@ -129,12 +147,25 @@ view model =
 -- LOGIC
 
 
-compoundInterest principle rate compoundsPerYear years =
-    principle * (1 + (rate / compoundsPerYear)) ^ (compoundsPerYear * years)
+valueAtYear : Model -> Float -> Float
+valueAtYear m years =
+    let
+        rate =
+            m.interest / m.compoundingPerYear / 100
 
+        contributionRate =
+            m.contributionGrowthRate / m.compoundingPerYear / 100
 
-futureValueOfSeries contribution rate compoundsPerYear years =
-    contribution * (((1 + rate / compoundsPerYear) ^ (compoundsPerYear * years) - 1) / (rate / compoundsPerYear))
+        compounds =
+            m.compoundingPerYear * years
+
+        compoundInterest =
+            m.initialPrincipal * (1 + rate) ^ compounds
+
+        futureValueOfSeries =
+            m.contribution * (((1 + rate) ^ compounds - (1 + contributionRate) ^ compounds) / (rate - contributionRate))
+    in
+    futureValueOfSeries + compoundInterest
 
 
 accumulatedInterest : Model -> List ( Date.Date, Float )
@@ -154,7 +185,6 @@ accumulatedInterest model =
         interest =
             model.interest / 100
     in
-    List.map3 (\date interest contribution -> ( date, contribution + interest ))
+    List.map2 (,)
         (List.map dateAfterYears years)
-        (List.map (compoundInterest model.initialPrincipal interest 12) years)
-        (List.map (futureValueOfSeries model.contribution interest 12) years)
+        (List.map (valueAtYear model) years)
