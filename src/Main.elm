@@ -23,12 +23,22 @@ main =
 
 
 type alias Model =
-    { interest : Float, years : Int, init : Float, contribution : Float, currentDate : Date.Date }
+    { interest : Float
+    , years : Int
+    , initialPrincipal : Float
+    , contribution : Float
+    , currentDate : Date.Date
+    }
 
 
 initialState : Model
 initialState =
-    { interest = 8, years = 10, init = 1000, contribution = 100, currentDate = Date.fromTime 0 }
+    { interest = 8
+    , years = 10
+    , initialPrincipal = 1000
+    , contribution = 100
+    , currentDate = Date.fromTime 0
+    }
 
 
 
@@ -57,7 +67,7 @@ update msg model =
         Principal s ->
             case String.toFloat s of
                 Ok f ->
-                    ( { model | init = f }, Cmd.none )
+                    ( { model | initialPrincipal = f }, Cmd.none )
 
                 Err e ->
                     ( model, Cmd.none )
@@ -98,7 +108,7 @@ view model =
         , p
             []
             [ text "Starting Principal: "
-            , input [ placeholder <| toString initialState.init ++ " EUR", onInput Principal ] []
+            , input [ placeholder <| toString initialState.initialPrincipal ++ " EUR", onInput Principal ] []
             ]
         , p
             []
@@ -119,12 +129,12 @@ view model =
 -- LOGIC
 
 
-compoundInterest p r n y =
-    p * (1 + (r / n)) ^ (n * y)
+compoundInterest principle rate compoundsPerYear years =
+    principle * (1 + (rate / compoundsPerYear)) ^ (compoundsPerYear * years)
 
 
-futureValueOfSeries c r n y =
-    c * (((1 + r / n) ^ (n * y) - 1) / (r / n))
+futureValueOfSeries contribution rate compoundsPerYear years =
+    contribution * (((1 + rate / compoundsPerYear) ^ (compoundsPerYear * years) - 1) / (rate / compoundsPerYear))
 
 
 accumulatedInterest : Model -> List ( Date.Date, Float )
@@ -146,5 +156,5 @@ accumulatedInterest model =
     in
     List.map3 (\date interest contribution -> ( date, contribution + interest ))
         (List.map dateAfterYears years)
-        (List.map (compoundInterest model.init interest 12) years)
+        (List.map (compoundInterest model.initialPrincipal interest 12) years)
         (List.map (futureValueOfSeries model.contribution interest 12) years)
