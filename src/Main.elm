@@ -184,8 +184,11 @@ valueAtYear m years =
         compoundInterest =
             m.initialPrincipal * (1 + rate) ^ compounds
 
+        contribution =
+            m.contribution * 12 / m.compoundingPerYear
+
         futureValueOfSeries =
-            m.contribution * (((1 + rate) ^ compounds - (1 + contributionRate) ^ compounds) / (rate - contributionRate))
+            contribution * (((1 + rate) ^ compounds - (1 + contributionRate) ^ compounds) / (rate - contributionRate))
     in
     futureValueOfSeries + compoundInterest
 
