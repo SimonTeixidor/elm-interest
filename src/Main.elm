@@ -154,7 +154,14 @@ valueAtYear m years =
             m.interest / m.compoundingPerYear / 100
 
         contributionRate =
-            m.contributionGrowthRate / m.compoundingPerYear / 100
+            let
+                wiggle =
+                    if m.interest == m.contributionGrowthRate then
+                        0.00000001
+                    else
+                        0
+            in
+            (m.contributionGrowthRate + wiggle) / m.compoundingPerYear / 100
 
         compounds =
             m.compoundingPerYear * years
