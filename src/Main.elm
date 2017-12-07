@@ -41,7 +41,7 @@ initialState =
     , contribution = 100
     , contributionGrowthRate = 3
     , currentDate = Date.fromTime 0
-    , compoundingPerYear = 12
+    , compoundingPerYear = 1
     }
 
 
@@ -56,6 +56,7 @@ type Msg
     | Contribution String
     | NewDate Date.Date
     | ContributionRate String
+    | CompoundPerYear String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -104,6 +105,14 @@ update msg model =
                 Err e ->
                     ( model, Cmd.none )
 
+        CompoundPerYear s ->
+            case String.toFloat s of
+                Ok f ->
+                    ( { model | compoundingPerYear = f }, Cmd.none )
+
+                Err e ->
+                    ( model, Cmd.none )
+
 
 
 -- VIEW
@@ -137,6 +146,12 @@ view model =
             []
             [ text "Duration (years): "
             , input [ placeholder <| toString initialState.years, onInput Duration, maxlength 3 ] []
+            ]
+        , p
+            []
+            [ text "Compound interest "
+            , input [ placeholder <| toString initialState.compoundingPerYear, onInput CompoundPerYear, maxlength 2 ] []
+            , text " times per year."
             ]
         , p [] [ text ("Final balance: " ++ toString (List.maximum <| List.map Tuple.second <| accumulatedInterest model)) ]
         , lineChart <| accumulatedInterest model
