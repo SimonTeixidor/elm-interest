@@ -7,14 +7,21 @@ import Html.Attributes exposing (maxlength, placeholder)
 import Html.Events exposing (onInput)
 import LineChart exposing (lineChart)
 import Task
+import Window
 
 
 main =
     Html.program
-        { init = ( initialState, Task.perform NewDate Date.now )
+        { init =
+            ( initialState
+            , Cmd.batch
+                [ Task.perform NewDate Date.now
+                , Task.perform NewWindowSize Window.size
+                ]
+            )
         , view = view
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions = \_ -> Window.resizes NewWindowSize
         }
 
 
@@ -30,6 +37,7 @@ type alias Model =
     , contributionGrowthRate : Float
     , currentDate : Date.Date
     , compoundingPerYear : Float
+    , windowSize : Window.Size
     }
 
 
@@ -42,6 +50,7 @@ initialState =
     , contributionGrowthRate = 3
     , currentDate = Date.fromTime 0
     , compoundingPerYear = 1
+    , windowSize = Window.Size 800 640
     }
 
 
@@ -57,6 +66,7 @@ type Msg
     | NewDate Date.Date
     | ContributionRate String
     | CompoundPerYear String
+    | NewWindowSize Window.Size
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -113,6 +123,9 @@ update msg model =
                 Err e ->
                     ( model, Cmd.none )
 
+        NewWindowSize s ->
+            ( { model | windowSize = s }, Cmd.none )
+
 
 
 -- VIEW
@@ -154,7 +167,7 @@ view model =
             , text " times per year."
             ]
         , p [] [ text ("Final balance: " ++ toString (List.maximum <| List.map Tuple.second <| accumulatedInterest model)) ]
-        , lineChart <| accumulatedInterest model
+        , lineChart model.windowSize <| accumulatedInterest model
         ]
 
 
