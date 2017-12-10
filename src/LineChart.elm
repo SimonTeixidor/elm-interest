@@ -2,7 +2,6 @@ module LineChart exposing (lineChart)
 
 import Date
 import Date.Extra.Core exposing (fromTime, toTime)
-import Date.Extra.Duration as Duration
 import Html exposing (Html)
 import Svg exposing (g, svg)
 import Svg.Attributes exposing (class, d, fill, height, stroke, strokeWidth, transform, width)
