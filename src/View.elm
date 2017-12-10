@@ -61,6 +61,6 @@ view model =
             [ p [] [ text <| "Final balance: " ++ formattedBalance ]
             ]
         , div [ class "row" ]
-            [ lineChart model.windowSize <| accumulatedInterest model
+            [ lineChart <| accumulatedInterest model
             ]
         ]
