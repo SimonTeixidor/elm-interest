@@ -60,7 +60,7 @@ lineChart : Window.Size -> List ( Date.Date, Float ) -> Html msg
 lineChart size data =
     let
         w =
-            size.width - padding
+            floor (toFloat size.width * 0.6) - padding
 
         h =
             min w <| floor <| toFloat size.height * 0.7
