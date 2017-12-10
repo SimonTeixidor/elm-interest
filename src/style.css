@@ -1,0 +1,17 @@
+.input-box {
+	float: left;
+	margin-right: 20px;
+	padding: 5px;
+}
+
+label, input {
+	display: block;
+}
+
+.row {
+	width: auto;
+	display: inline-block;
+}
+
+body {
+}

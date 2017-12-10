@@ -12,9 +12,9 @@ import Visualization.Shape as Shape
 import Window
 
 
-padding : Float
+padding : Int
 padding =
-    100
+    60
 
 
 xScale : List ( Date.Date, Float ) -> Int -> ContinuousTimeScale
@@ -29,7 +29,7 @@ xScale lst w =
         minVal =
             fromTime <| Maybe.withDefault 0 <| List.minimum <| List.map toTime xVals
     in
-    Scale.time ( minVal, maxVal ) ( 0, toFloat w - 2 * padding )
+    Scale.time ( minVal, maxVal ) ( 0, toFloat <| w - 2 * padding )
 
 
 yScale : List ( Date.Date, Float ) -> Int -> ContinuousScale
@@ -44,7 +44,7 @@ yScale lst h =
         minVal =
             Maybe.withDefault 0 <| List.minimum yVals
     in
-    Scale.linear ( minVal / 1.2, maxVal * 1.2 ) ( toFloat h - 2 * padding, 0 )
+    Scale.linear ( minVal / 1.2, maxVal * 1.2 ) ( toFloat <| h - 2 * padding, 0 )
 
 
 xAxis : List ( Date.Date, Float ) -> Int -> Svg.Svg msg
@@ -61,10 +61,10 @@ lineChart : Window.Size -> List ( Date.Date, Float ) -> Html msg
 lineChart size data =
     let
         w =
-            size.width
+            size.width - padding
 
         h =
-            min size.width <| size.height // 2
+            min w <| floor <| toFloat size.height * 0.7
 
         scale ( x, y ) =
             Just ( Scale.convert (xScale data w) x, Scale.convert (yScale data h) y )
@@ -73,8 +73,8 @@ lineChart size data =
             d <| Shape.line Shape.linearCurve <| List.map scale <| data
     in
     Svg.svg [ width (toString w ++ "px"), height (toString h ++ "px") ]
-        [ g [ transform ("translate(" ++ toString (padding - 1) ++ ", " ++ toString (toFloat h - padding) ++ ")") ]
-            [ xAxis data w ]
+        [ g [ transform ("translate(" ++ toString (padding - 1) ++ ", " ++ toString (h - padding) ++ ")") ]
+            [ xAxis data size.width ]
         , g [ transform ("translate(" ++ toString (padding - 1) ++ ", " ++ toString padding ++ ")") ]
             [ yAxis data h ]
         , g [ transform ("translate(" ++ toString padding ++ ", " ++ toString padding ++ ")"), class "series" ]

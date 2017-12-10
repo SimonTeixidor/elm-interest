@@ -2,8 +2,8 @@ module Main exposing (..)
 
 import Date
 import Date.Extra.Duration as Duration
-import Html exposing (Attribute, Html, div, input, p, text)
-import Html.Attributes exposing (maxlength, placeholder)
+import Html exposing (Attribute, Html, br, div, input, label, p, text)
+import Html.Attributes exposing (class, maxlength, placeholder)
 import Html.Events exposing (onInput)
 import LineChart exposing (lineChart)
 import Task
@@ -133,40 +133,35 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div
-        []
-        [ p
-            []
-            [ text "Yearly Interest: "
-            , input [ placeholder <| toString initialState.interest ++ "%", onInput Interest ] []
+    div []
+        [ div [ class "row" ]
+            [ Html.node "link" [ Html.Attributes.rel "stylesheet", Html.Attributes.href "style.css" ] []
+            , div [ class "input-box" ]
+                [ label [] [ text "Yearly Interest: " ]
+                , input [ placeholder <| toString initialState.interest ++ "%", onInput Interest ] []
+                ]
+            , div [ class "input-box" ]
+                [ text "Starting Principal: "
+                , input [ placeholder <| toString initialState.initialPrincipal ++ " EUR", onInput Principal ] []
+                ]
+            , div [ class "input-box" ]
+                [ text "Monthly Contribution: "
+                , input [ placeholder <| toString initialState.contribution ++ " EUR", onInput Contribution ] []
+                ]
+            , div [ class "input-box" ]
+                [ text "Contribution Growth: "
+                , input [ placeholder <| toString initialState.contributionGrowthRate ++ " %", onInput ContributionRate ] []
+                ]
+            , div [ class "input-box" ]
+                [ text "Duration (years): "
+                , input [ placeholder <| toString initialState.years, onInput Duration, maxlength 3 ] []
+                ]
+            , div [ class "input-box" ]
+                [ text "Times per year to compound interest: "
+                , input [ placeholder <| toString initialState.compoundingPerYear, onInput CompoundPerYear, maxlength 2 ] []
+                ]
             ]
-        , p
-            []
-            [ text "Starting Principal: "
-            , input [ placeholder <| toString initialState.initialPrincipal ++ " EUR", onInput Principal ] []
-            ]
-        , p
-            []
-            [ text "Monthly Contribution: "
-            , input [ placeholder <| toString initialState.contribution ++ " EUR", onInput Contribution ] []
-            ]
-        , p
-            []
-            [ text "Contribution Growth: "
-            , input [ placeholder <| toString initialState.contributionGrowthRate ++ " %", onInput ContributionRate ] []
-            ]
-        , p
-            []
-            [ text "Duration (years): "
-            , input [ placeholder <| toString initialState.years, onInput Duration, maxlength 3 ] []
-            ]
-        , p
-            []
-            [ text "Compound interest "
-            , input [ placeholder <| toString initialState.compoundingPerYear, onInput CompoundPerYear, maxlength 2 ] []
-            , text " times per year."
-            ]
-        , p [] [ text ("Final balance: " ++ toString (List.maximum <| List.map Tuple.second <| accumulatedInterest model)) ]
+        , div [ class "row" ] [ p [] [ text ("Final balance: " ++ toString (List.maximum <| List.map Tuple.second <| accumulatedInterest model)) ] ]
         , lineChart model.windowSize <| accumulatedInterest model
         ]
 
