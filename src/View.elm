@@ -45,7 +45,7 @@ view model =
                 ]
             , div [ class "input-box" ]
                 [ label [] [ text "Duration (years):" ]
-                , input [ placeholder <| toString initialState.years, onInput Duration, maxlength 3 ] []
+                , input [ placeholder <| toString initialState.years, onInput Duration, maxlength 2 ] []
                 ]
             , div [ class "input-box" ]
                 [ label [] [ text "Compounding Frequency:" ]
