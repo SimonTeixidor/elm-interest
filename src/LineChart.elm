@@ -44,31 +44,16 @@ yearFraction d =
     yearFraction + (toFloat <| Date.year d)
 
 
-spacedPositions : AxisSummary -> (Int -> Int) -> List Float
-spacedPositions summary spacingF =
-    let
-        start =
-            ceiling <| summary.min
-
-        stop =
-            ceiling <| summary.max
-
-        diff =
-            stop - start
-
-        spacing =
-            spacingF diff
-    in
-    List.range 0 ((stop - start) // spacing)
-        |> List.map ((*) spacing)
-        |> List.map ((+) start)
-        |> List.map toFloat
-
-
 yearPositions : AxisSummary -> List Float
 yearPositions summary =
-    spacedPositions summary <|
-        \diff ->
+    let
+        offset =
+            (toFloat <| ceiling summary.min) - summary.min
+
+        diff =
+            summary.max - summary.min
+
+        spacing =
             if diff < 10 then
                 1
             else if diff < 20 then
@@ -77,6 +62,8 @@ yearPositions summary =
                 5
             else
                 10
+    in
+    interval offset spacing summary
 
 
 horizontalAxis =
@@ -87,42 +74,8 @@ horizontalAxis =
                     simpleLine summary
             in
             { position = closestToZero
-            , axisLine = Just { axisLine | end = toFloat <| ceiling <| summary.max }
+            , axisLine = Just { axisLine | end = Maybe.withDefault 0 <| List.maximum <| yearPositions summary }
             , ticks = List.map simpleTick (yearPositions summary)
             , labels = List.map simpleLabel (yearPositions summary)
-            , flipAnchor = False
-            }
-
-
-amountPositions : AxisSummary -> List Float
-amountPositions summary =
-    spacedPositions summary <|
-        \diff ->
-            let
-                zeroes =
-                    floor <| logBase 10 <| toFloat diff
-
-                even =
-                    10 ^ (zeroes - 1)
-            in
-            if diff // even < 2 then
-                even // 5
-            else if diff // even < 5 then
-                even // 2
-            else
-                even
-
-
-verticalAxis =
-    customAxis <|
-        \summary ->
-            let
-                axisLine =
-                    simpleLine summary
-            in
-            { position = closestToZero
-            , axisLine = Just { axisLine | end = toFloat <| ceiling <| summary.max }
-            , ticks = List.map simpleTick (amountPositions summary)
-            , labels = List.map simpleLabel (amountPositions summary)
             , flipAnchor = False
             }
