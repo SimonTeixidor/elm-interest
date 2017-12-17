@@ -25,7 +25,11 @@ view model =
     in
     div []
         [ div [ class "row" ]
-            [ Html.node "link" [ Html.Attributes.rel "stylesheet", Html.Attributes.href "style.css" ] []
+            [ Html.node "link"
+                [ Html.Attributes.rel "stylesheet", Html.Attributes.href "https://fonts.googleapis.com/css?family=Open+Sans|Raleway" ]
+                []
+            , Html.node "link" [ Html.Attributes.rel "stylesheet", Html.Attributes.href "style.css" ] []
+            , h3 [] [ text "Settings:" ]
             , div [ class "input-box" ]
                 [ label [] [ text "Yearly Interest:" ]
                 , input [ placeholder <| toString initialState.interest ++ "%", onInput Interest ] []

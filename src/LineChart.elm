@@ -54,11 +54,11 @@ yearPositions summary =
             summary.max - summary.min
 
         spacing =
-            if diff < 10 then
+            if diff < 5 then
                 1
-            else if diff < 20 then
+            else if diff < 10 then
                 2
-            else if diff < 50 then
+            else if diff < 25 then
                 5
             else
                 10
