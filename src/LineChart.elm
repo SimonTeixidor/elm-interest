@@ -13,7 +13,7 @@ lineChart data =
             defaultSeriesPlotCustomizations.margin
 
         newMargin =
-            { margin | left = 100, right = 100 }
+            { margin | left = 100, right = 100, top = 100, bottom = 100 }
 
         newCustom =
             { defaultSeriesPlotCustomizations | margin = newMargin, horizontalAxis = horizontalAxis }
