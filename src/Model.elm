@@ -1,7 +1,6 @@
 module Model exposing (Model, initialState)
 
 import Date
-import Window
 
 
 type alias Model =
@@ -12,7 +11,6 @@ type alias Model =
     , contributionGrowthRate : Float
     , currentDate : Date.Date
     , compoundingPerYear : Float
-    , windowSize : Window.Size
     }
 
 
@@ -25,5 +23,4 @@ initialState =
     , contributionGrowthRate = 3
     , currentDate = Date.fromTime 0
     , compoundingPerYear = 1
-    , windowSize = Window.Size 800 640
     }

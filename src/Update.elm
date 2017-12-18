@@ -2,7 +2,6 @@ module Update exposing (Msg(..), update)
 
 import Date
 import Model exposing (Model)
-import Window
 
 
 type Msg
@@ -13,7 +12,6 @@ type Msg
     | NewDate Date.Date
     | ContributionRate String
     | CompoundPerYear String
-    | NewWindowSize Window.Size
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -69,6 +67,3 @@ update msg model =
 
                 Err e ->
                     ( model, Cmd.none )
-
-        NewWindowSize s ->
-            ( { model | windowSize = s }, Cmd.none )

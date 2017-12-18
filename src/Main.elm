@@ -6,19 +6,15 @@ import Model exposing (Model, initialState)
 import Task
 import Update exposing (Msg(..), update)
 import View exposing (view)
-import Window
 
 
 main =
     Html.program
         { init =
             ( initialState
-            , Cmd.batch
-                [ Task.perform NewDate Date.now
-                , Task.perform NewWindowSize Window.size
-                ]
+            , Task.perform NewDate Date.now
             )
         , view = view
         , update = update
-        , subscriptions = \_ -> Window.resizes NewWindowSize
+        , subscriptions = always Sub.none
         }
