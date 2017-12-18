@@ -4,6 +4,7 @@ import Date exposing (Month(..))
 import Date.Extra.Create exposing (dateFromFields)
 import Html
 import Plot exposing (..)
+import Svg.Attributes exposing (stroke)
 
 
 lineChart : List ( Date.Date, Float ) -> Html.Html msg
@@ -19,7 +20,7 @@ lineChart data =
             { defaultSeriesPlotCustomizations | margin = newMargin, horizontalAxis = horizontalAxis }
     in
     viewSeriesCustom newCustom
-        [ line (List.map (\( x, y ) -> clear (yearFraction x) y)) ]
+        [ customLineSeries ]
         data
 
 
@@ -79,3 +80,29 @@ horizontalAxis =
             , labels = List.map simpleLabel (yearPositions summary)
             , flipAnchor = False
             }
+
+
+
+-- Used as a workaround as the provided axis in a line plot doesn't reach the last tick.
+
+
+customLineSeries =
+    { axis =
+        customAxis <|
+            \summary ->
+                let
+                    axisLine =
+                        simpleLine summary
+
+                    tickPositions =
+                        decentPositions summary |> remove 0
+                in
+                { position = closestToZero
+                , axisLine = Just { axisLine | end = Maybe.withDefault 0 <| List.maximum tickPositions }
+                , ticks = List.map simpleTick tickPositions
+                , labels = List.map simpleLabel (decentPositions summary |> remove 0)
+                , flipAnchor = False
+                }
+    , interpolation = Linear Nothing [ stroke "#000000" ]
+    , toDataPoints = List.map (\( x, y ) -> clear (yearFraction x) y)
+    }
