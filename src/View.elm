@@ -26,7 +26,7 @@ view model =
     div []
         [ div [ class "row" ]
             [ Html.node "link"
-                [ Html.Attributes.rel "stylesheet", Html.Attributes.href "https://fonts.googleapis.com/css?family=Open+Sans|Raleway" ]
+                [ Html.Attributes.rel "stylesheet", Html.Attributes.href "https://fonts.googleapis.com/css?family=Oxygen" ]
                 []
             , Html.node "link" [ Html.Attributes.rel "stylesheet", Html.Attributes.href "style.css" ] []
             , h3 [] [ text "Settings:" ]
