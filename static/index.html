@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" /> 
+    <title>Calculate compounding interest</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="elm.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta name="description" content="An interactive compounding interest calculator.">
+    <meta name="keywords" content="interest,compounding,saving,finance,retirement">
+    <meta name="author" content="Simon Persson">
+  </head>
+  <body>
+    <div id="header">
+      <h1>Calculate compounding interest</h1>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div id="main-app"></div>
+    <script>
+      var node = document.getElementById('main-app');
+var app = Elm.Main.embed(node);
+    </script>
+    <section id="about">
+      <h3>About</h3>
+      <p>This tool demonstrates the power of compounding interest.</p>
+      <p>I made it both to play around with compounding interest calculations, and to teach
+      myself more about reactive web development.</p>
+      <p>The application is written in the Elm programming language, and is available as free
+      software on <a href="https://github.com/SimonPersson/elm-interest">GitHub</a>.</p>
+    </section>
+    <section id="contact">
+      <h3>Contact</h3>
+      This site was developed by
+      <a href="&#109;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#115;&#x69;&#109;&#111;&#110;&#x40;&#102;&#108;&#x61;&#115;&#107;&#x70;&#x6f;&#x73;&#116;&#46;&#109;&#101;">Simon Persson</a>.
+    </section>
+  </body>
+</html>
