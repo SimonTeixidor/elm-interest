@@ -12,7 +12,7 @@ env:
 install:
   - node --version
   - npm --version
-  - npm install -g elm
+  - npm install -g elm google-closure-compiler-js
   - mkdir out
 
 script:
@@ -26,6 +26,7 @@ script:
       cd ..;
     fi
   - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-make src/Main.elm --output=static/elm.js --yes
+  - google-closure-compiler-js static/elm.js > static/elm.min.js 
 
 deploy:
   provider: pages
