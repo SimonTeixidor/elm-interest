@@ -37,10 +37,14 @@ label, input, select {
 	border-color: #DDDDDD;
 }
 
+h1,h2,h3 {
+	font-family: 'Helvetica',sans-serif;
+}
+
 body {
 	margin: 0 auto;
 	max-width: 40em;
-	font-family: 'Helvetica',sans-serif;
+	font-family: 'Georgia','Cambria',serif;
 	font-size: 1.3em;
 	border-style: solid;
 	border-color: transparent;
@@ -50,4 +54,8 @@ body {
 
 #header a {
   padding-right: 1em;
+}
+
+a {
+	text-decoration: none;
 }
