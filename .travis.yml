@@ -12,7 +12,7 @@ env:
 install:
   - node --version
   - npm --version
-  - npm install -g elm google-closure-compiler-js
+  - npm install -g elm google-closure-compiler-js elm-static-html
   - mkdir out
 
 script:
@@ -26,13 +26,16 @@ script:
       cd ..;
     fi
   - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-make src/Main.elm --output=static/elm.js --yes
-  - google-closure-compiler-js static/elm.js > static/elm.min.js 
+  - google-closure-compiler-js static/elm.js > out/elm.js
+  - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-static-html -f src/InitialView.elm -o static/main.html
+  - cat static/intro.html static/main.html static/outro.html > out/index.html
+  - cp static/CNAME static/style.css out/
 
 deploy:
   provider: pages
   skip_cleanup: true
   github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
-  local_dir: static
+  local_dir: out 
   fqdn: growing.cash
   on:
     branch: master 
