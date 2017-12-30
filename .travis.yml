@@ -28,8 +28,8 @@ script:
   - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-make src/Main.elm --output=static/elm.js --yes
   - google-closure-compiler-js static/elm.js > out/elm.js
   - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-static-html -f src/InitialView.elm -o static/main.html
-  - cat static/intro.html static/main.html static/outro.html > out/index.html
-  - cp static/CNAME static/style.css out/
+  - cat static/intro1.html static/style.css static/intro2.html static/main.html static/outro.html > out/index.html
+  - cp static/favicon.ico static/CNAME out/
 
 deploy:
   provider: pages
