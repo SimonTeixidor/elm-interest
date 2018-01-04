@@ -1,4 +1,4 @@
-module LineChart exposing (lineChart)
+module LineChart exposing (lineChart, yearPositions)
 
 import Date exposing (Month(..))
 import Date.Extra.Create exposing (dateFromFields)
@@ -45,14 +45,14 @@ yearFraction d =
     yearFraction + (toFloat <| Date.year d)
 
 
-yearPositions : AxisSummary -> List Float
-yearPositions summary =
+yearPositions : Float -> Float -> List Float
+yearPositions minVal maxVal =
     let
         offset =
-            (toFloat <| ceiling summary.min) - summary.min
+            (toFloat <| ceiling minVal) - minVal
 
         diff =
-            summary.max - summary.min
+            maxVal - minVal - offset
 
         spacing =
             if diff < 5 then
@@ -64,20 +64,19 @@ yearPositions summary =
             else
                 10
     in
-    interval offset spacing summary
+    List.range 0 (floor <| diff / spacing)
+        |> List.map toFloat
+        |> List.map ((*) spacing)
+        |> List.map ((+) (offset + minVal))
 
 
 horizontalAxis =
     customAxis <|
         \summary ->
-            let
-                axisLine =
-                    simpleLine summary
-            in
             { position = closestToZero
-            , axisLine = Just { axisLine | end = Maybe.withDefault 0 <| List.maximum <| yearPositions summary }
-            , ticks = List.map simpleTick (yearPositions summary)
-            , labels = List.map simpleLabel (yearPositions summary)
+            , axisLine = Just <| simpleLine summary
+            , ticks = List.map simpleTick (yearPositions summary.min summary.max)
+            , labels = List.map simpleLabel (yearPositions summary.min summary.max)
             , flipAnchor = False
             }
 
