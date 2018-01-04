@@ -5,6 +5,7 @@ node_js:
 cache:
   directories:
     - sysconfcpus
+    - $(npm config get prefix)/lib/node_modules
 
 env:
   - ELM_VERSION=0.18.0
