@@ -4,14 +4,9 @@ import AccumulatedInterest
 import Date
 import Expect
 import Fuzz exposing (..)
+import LineChart exposing (yearPositions)
 import Model
 import Test exposing (..)
-import Test.Runner.Html
-
-
-main : Test.Runner.Html.TestProgram
-main =
-    [ testWithoutContribution, testNoNaN ] |> concat |> Test.Runner.Html.run
 
 
 allZeroesModel : Model.Model
@@ -117,3 +112,35 @@ testNoNaN =
                     |> maxResult
                     |> isNaN
                 )
+
+
+fuzzPlotTickRange : (List Float -> Maybe Float) -> String -> Test
+fuzzPlotTickRange f str =
+    fuzz2
+        (floatRange 0 1000)
+        (floatRange 0 1000)
+        str
+    <|
+        \a b ->
+            let
+                minVal =
+                    min a b
+
+                maxVal =
+                    1 + max a b
+
+                isInside =
+                    Expect.all
+                        [ Expect.atMost maxVal
+                        , Expect.atLeast minVal
+                        ]
+            in
+            isInside (Maybe.withDefault 0 <| f <| yearPositions minVal maxVal)
+
+
+testPlotTickRange : Test
+testPlotTickRange =
+    describe "Test that both the max and min tick are inside"
+        [ fuzzPlotTickRange List.maximum "Max is within range"
+        , fuzzPlotTickRange List.minimum "Min is within range"
+        ]

@@ -6,6 +6,8 @@ cache:
   directories:
     - sysconfcpus
     - $(npm config get prefix)/lib/node_modules
+    - elm-stuff/build-artifacts
+    - tests/elm-stuff/build-artifacts
 
 env:
   - ELM_VERSION=0.18.0
@@ -13,7 +15,7 @@ env:
 install:
   - node --version
   - npm --version
-  - npm install -g elm google-closure-compiler-js elm-static-html
+  - npm install -g elm google-closure-compiler-js elm-static-html elm-test
   - mkdir out
 
 script:
@@ -26,6 +28,7 @@ script:
       make && make install;
       cd ..;
     fi
+  - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-test
   - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-make src/Main.elm --output=static/elm.js --yes
   - google-closure-compiler-js static/elm.js > out/elm.js
   - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-static-html -f src/InitialView.elm -o static/main.html
