@@ -61,8 +61,10 @@ yearPositions minVal maxVal =
                 2
             else if diff < 25 then
                 5
-            else
+            else if diff < 50 then
                 10
+            else
+                20
     in
     List.range 0 (floor <| diff / spacing)
         |> List.map toFloat
