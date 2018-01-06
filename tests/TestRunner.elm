@@ -18,6 +18,7 @@ allZeroesModel =
     , contributionGrowthRate = 0
     , currentDate = Date.fromTime 0
     , compoundingPerYear = 1
+    , showAdvanced = False
     }
 
 
@@ -105,6 +106,7 @@ testNoNaN =
                     , contributionGrowthRate = contributionGrowth
                     , currentDate = Date.fromTime 0
                     , compoundingPerYear = 365
+                    , showAdvanced = False
                     }
             in
             Expect.false "Expected the calculation to not yield NaN."
