@@ -8,7 +8,7 @@ import Html.Attributes exposing (class, id, maxlength, placeholder, value)
 import Html.Events exposing (onInput)
 import LineChart exposing (lineChart)
 import Model exposing (Model, initialState)
-import Update exposing (Msg(..))
+import Msg exposing (Msg(..))
 
 
 view : Model -> Html Msg

@@ -3,8 +3,9 @@ module Main exposing (..)
 import Date
 import Html
 import Model exposing (Model, initialState)
+import Msg exposing (Msg(..))
 import Task
-import Update exposing (Msg(..), update)
+import Update exposing (update)
 import View exposing (view)
 
 

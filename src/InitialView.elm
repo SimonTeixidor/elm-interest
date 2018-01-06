@@ -2,7 +2,7 @@ module InitialView exposing (view)
 
 import Html
 import Model exposing (initialState)
-import Update exposing (Msg)
+import Msg exposing (Msg)
 import View as V
 
 

@@ -1,17 +1,7 @@
-module Update exposing (Msg(..), update)
+module Update exposing (update)
 
-import Date
 import Model exposing (Model)
-
-
-type Msg
-    = Interest String
-    | Principal String
-    | Duration String
-    | Contribution String
-    | NewDate Date.Date
-    | ContributionRate String
-    | CompoundPerYear String
+import Msg exposing (Msg(..))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
