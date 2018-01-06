@@ -25,8 +25,29 @@ view model =
 
         simpleParamForms =
             [ div [ class "input-box" ]
-                [ label [] [ text "Yearly Interest:" ]
-                , input [ placeholder <| toString initialState.interest ++ "%", onInput Interest ] []
+                [ label []
+                    [ text <|
+                        (if model.showAdvanced then
+                            "Inflation Adjusted "
+                         else
+                            ""
+                        )
+                            ++ "Yearly Return:"
+                    ]
+                , if model.showAdvanced then
+                    input [ placeholder <| toString initialState.interest ++ "%", onInput Interest ] []
+                  else
+                    let
+                        stockReturn =
+                            toString initialState.interest
+                    in
+                    select [ onInput Interest ]
+                        [ option
+                            [ value stockReturn ]
+                            [ text ("Average Stock Returns: " ++ stockReturn ++ "%") ]
+                        , option [ value "3.5" ] [ text "Average Bond Returns: 3.5%" ]
+                        , option [ value "-1" ] [ text "Average Savings Account Interest: -1%" ]
+                        ]
                 ]
             , div [ class "input-box" ]
                 [ label [] [ text "Starting Principal:" ]

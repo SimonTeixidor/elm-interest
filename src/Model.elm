@@ -17,11 +17,11 @@ type alias Model =
 
 initialState : Model
 initialState =
-    { interest = 8
+    { interest = 7
     , years = 10
     , initialPrincipal = 1000
     , contribution = 100
-    , contributionGrowthRate = 3
+    , contributionGrowthRate = 0
     , currentDate = Date.fromTime 0
     , compoundingPerYear = 1
     , showAdvanced = False
