@@ -11,6 +11,7 @@ type alias Model =
     , contributionGrowthRate : Float
     , currentDate : Date.Date
     , compoundingPerYear : Float
+    , showAdvanced : Bool
     }
 
 
@@ -23,4 +24,5 @@ initialState =
     , contributionGrowthRate = 3
     , currentDate = Date.fromTime 0
     , compoundingPerYear = 1
+    , showAdvanced = False
     }

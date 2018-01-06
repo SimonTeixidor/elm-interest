@@ -57,3 +57,6 @@ update msg model =
 
                 Err e ->
                     ( model, Cmd.none )
+
+        ShowAdvanced b ->
+            ( { model | showAdvanced = b }, Cmd.none )

@@ -4,8 +4,8 @@ import AccumulatedInterest exposing (accumulatedInterest)
 import FormatNumber
 import FormatNumber.Locales exposing (frenchLocale)
 import Html exposing (Attribute, Html, br, div, h3, input, label, option, p, select, text)
-import Html.Attributes exposing (class, id, maxlength, placeholder, value)
-import Html.Events exposing (onInput)
+import Html.Attributes exposing (class, id, maxlength, placeholder, type_, value)
+import Html.Events exposing (onCheck, onInput)
 import LineChart exposing (lineChart)
 import Model exposing (Model, initialState)
 import Msg exposing (Msg(..))
@@ -22,11 +22,9 @@ view model =
 
         formattedBalance =
             FormatNumber.format { frenchLocale | decimals = 2 } finalNumber
-    in
-    div []
-        [ div [ class "row" ]
-            [ h3 [] [ text "Settings:" ]
-            , div [ class "input-box" ]
+
+        simpleParamForms =
+            [ div [ class "input-box" ]
                 [ label [] [ text "Yearly Interest:" ]
                 , input [ placeholder <| toString initialState.interest ++ "%", onInput Interest ] []
                 ]
@@ -39,12 +37,15 @@ view model =
                 , input [ placeholder <| toString initialState.contribution ++ " EUR", onInput Contribution ] []
                 ]
             , div [ class "input-box" ]
-                [ label [] [ text "Contribution Growth:" ]
-                , input [ placeholder <| toString initialState.contributionGrowthRate ++ " %", onInput ContributionRate ] []
-                ]
-            , div [ class "input-box" ]
                 [ label [] [ text "Duration (years):" ]
                 , input [ placeholder <| toString initialState.years, onInput Duration, maxlength 2 ] []
+                ]
+            ]
+
+        advancedParamForms =
+            [ div [ class "input-box" ]
+                [ label [] [ text "Contribution Growth:" ]
+                , input [ placeholder <| toString initialState.contributionGrowthRate ++ " %", onInput ContributionRate ] []
                 ]
             , div [ class "input-box" ]
                 [ label [] [ text "Compounding Frequency:" ]
@@ -55,6 +56,21 @@ view model =
                     , option [ value "365" ] [ text "Daily" ]
                     ]
                 ]
+            ]
+    in
+    div []
+        [ div [ class "row" ]
+            [ h3 [ class "left" ] [ text "Settings:" ]
+            ]
+        , div [ class "row" ]
+            (if model.showAdvanced then
+                simpleParamForms ++ advancedParamForms
+             else
+                simpleParamForms
+            )
+        , div [ class "row" ]
+            [ label [] [ text "Show advanced parameters:" ]
+            , input [ type_ "checkbox", onCheck ShowAdvanced ] []
             ]
         , div [ class "row" ]
             [ h3 [] [ text <| "Final balance: " ++ formattedBalance ]
