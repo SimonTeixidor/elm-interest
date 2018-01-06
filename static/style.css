@@ -4,7 +4,7 @@
 	padding: 0.3em;
 }
 
-label, input, select {
+.input-box label, .input-box input, .input-box select {
 	display: block;
 }
 
@@ -35,6 +35,7 @@ label, input, select {
 }
 
 h1,h2,h3 {
+	padding-right: 1em;
 	font-family: 'Helvetica',sans-serif;
 }
 
