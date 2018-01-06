@@ -25,15 +25,7 @@ view model =
 
         simpleParamForms =
             [ div [ class "input-box" ]
-                [ label []
-                    [ text <|
-                        (if model.showAdvanced then
-                            "Inflation Adjusted "
-                         else
-                            ""
-                        )
-                            ++ "Yearly Return:"
-                    ]
+                [ label [] [ text "Yearly Return:" ]
                 , if model.showAdvanced then
                     input [ placeholder <| toString initialState.interest ++ "%", onInput Interest ] []
                   else
@@ -42,11 +34,10 @@ view model =
                             toString initialState.interest
                     in
                     select [ onInput Interest ]
-                        [ option
-                            [ value stockReturn ]
-                            [ text ("Average Stock Returns: " ++ stockReturn ++ "%") ]
-                        , option [ value "3.5" ] [ text "Average Bond Returns: 3.5%" ]
-                        , option [ value "-1" ] [ text "Average Savings Account Interest: -1%" ]
+                        [ option [ value stockReturn ]
+                            [ text ("Stocks: " ++ stockReturn ++ "%") ]
+                        , option [ value "3.5" ] [ text "Bonds: 3.5%" ]
+                        , option [ value "-1" ] [ text "Savings Account: -1%" ]
                         ]
                 ]
             , div [ class "input-box" ]
@@ -69,7 +60,7 @@ view model =
                 , input [ placeholder <| toString initialState.contributionGrowthRate ++ " %", onInput ContributionRate ] []
                 ]
             , div [ class "input-box" ]
-                [ label [] [ text "Compounding Frequency:" ]
+                [ label [] [ text "Compound Frequency:" ]
                 , select [ onInput CompoundPerYear ]
                     [ option [ value "1" ] [ text "Yearly" ]
                     , option [ value "6" ] [ text "Semi Anually" ]
