@@ -9,21 +9,22 @@ import Model
 import Test exposing (..)
 
 
-allZeroesModel : Model.CalcParams
+allZeroesModel : Model.Model
 allZeroesModel =
-    { id = 0
-    , interest = 0
-    , years = 0
+    { firstParam =
+        { id = 0
+        , interest = 0
+        , years = 0
+        , contribution = 0
+        , contributionGrowthRate = 0
+        , compoundingPerYear = 1
+        }
+    , parameters = []
     , initialPrincipal = 0
-    , contribution = 0
-    , contributionGrowthRate = 0
-    , compoundingPerYear = 1
+    , currentDate = Date.fromTime 0
+    , showAdvanced = False
+    , uid = 0
     }
-
-
-zeroDate : Date.Date
-zeroDate =
-    Date.fromTime 0
 
 
 maxResult : List ( Date.Date, Float ) -> Float
@@ -47,45 +48,66 @@ testWithoutContribution =
         [ test "10 years of interest with no contribution." <|
             \() ->
                 let
-                    model =
-                        { allZeroesModel | interest = 5, years = 10, initialPrincipal = 100 }
+                    firstParam =
+                        allZeroesModel.firstParam
                 in
                 Expect.within (Expect.Relative 0.1)
-                    (AccumulatedInterest.accumulatedInterest model zeroDate |> maxResult)
+                    (AccumulatedInterest.accumulatedInterest
+                        { allZeroesModel
+                            | firstParam = { firstParam | interest = 5, years = 10 }
+                            , initialPrincipal = 100
+                        }
+                        |> maxResult
+                    )
                     (iteratingInterest 10 100 1.05)
         , test "10 years of only contributions" <|
             \() ->
+                let
+                    firstParam =
+                        allZeroesModel.firstParam
+                in
                 Expect.within (Expect.Relative 0.1)
                     (AccumulatedInterest.accumulatedInterest
-                        { allZeroesModel | years = 10, contribution = 10 }
-                        zeroDate
+                        { allZeroesModel | firstParam = { firstParam | years = 10, contribution = 10 } }
                         |> maxResult
                     )
                     (10 * 10 * 12)
         , test "10 years with contributions and interest" <|
             \() ->
+                let
+                    firstParam =
+                        allZeroesModel.firstParam
+                in
                 Expect.within (Expect.Relative 0.1)
                     (AccumulatedInterest.accumulatedInterest
                         { allZeroesModel
-                            | years = 10
-                            , contribution = 10
-                            , interest = 5
+                            | firstParam =
+                                { firstParam
+                                    | years = 10
+                                    , contribution = 10
+                                    , interest = 5
+                                }
                         }
-                        zeroDate
                         |> maxResult
                     )
                     (iteratingContributionInterest 10 120 1.05)
         , test "10 years with contributions, initial, and interest" <|
             \() ->
+                let
+                    firstParam =
+                        allZeroesModel.firstParam
+                in
                 Expect.within (Expect.Relative 0.1)
                     (AccumulatedInterest.accumulatedInterest
                         { allZeroesModel
-                            | years = 10
-                            , contribution = 10
-                            , interest = 5
+                            | firstParam =
+                                { firstParam
+                                    | years = 10
+                                    , contribution = 10
+                                    , interest = 5
+                                }
                             , initialPrincipal = 10000
                         }
-                        zeroDate
                         |> maxResult
                     )
                     (iteratingContributionInterest 10 120 1.05 + iteratingInterest 10 10000 1.05)
@@ -105,17 +127,23 @@ testNoNaN =
         \interest principal years contribution contributionGrowth ->
             let
                 model =
-                    { id = 0
-                    , interest = interest
-                    , years = years
+                    { firstParam =
+                        { id = 0
+                        , interest = interest
+                        , years = years
+                        , contribution = contribution
+                        , contributionGrowthRate = contributionGrowth
+                        , compoundingPerYear = 365
+                        }
+                    , parameters = []
                     , initialPrincipal = principal
-                    , contribution = contribution
-                    , contributionGrowthRate = contributionGrowth
-                    , compoundingPerYear = 365
+                    , currentDate = Date.fromTime 0
+                    , showAdvanced = False
+                    , uid = 0
                     }
             in
             Expect.false "Expected the calculation to not yield NaN."
-                (AccumulatedInterest.accumulatedInterest model zeroDate
+                (AccumulatedInterest.accumulatedInterest model
                     |> maxResult
                     |> isNaN
                 )

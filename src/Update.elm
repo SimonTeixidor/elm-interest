@@ -31,14 +31,6 @@ update msg model =
                                     Err e ->
                                         p
 
-                            Principal s ->
-                                case String.toFloat s of
-                                    Ok f ->
-                                        { p | initialPrincipal = f }
-
-                                    Err e ->
-                                        p
-
                             Duration s ->
                                 case String.toInt s of
                                     Ok i ->
@@ -83,6 +75,16 @@ update msg model =
                         updateParamId id updateFunc model.parameters
                 in
                 ( { model | parameters = params }, Cmd.none )
+
+        Principal s ->
+            ( case String.toFloat s of
+                Ok f ->
+                    { model | initialPrincipal = f }
+
+                Err e ->
+                    model
+            , Cmd.none
+            )
 
         NewDate d ->
             ( { model | currentDate = d }, Cmd.none )

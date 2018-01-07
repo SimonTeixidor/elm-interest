@@ -15,7 +15,7 @@ view : Model -> Html Msg
 view model =
     let
         dataPoints =
-            accumulatedInterest model.firstParam model.currentDate
+            accumulatedInterest model
 
         finalNumber =
             Maybe.withDefault 0 <| Maybe.map Tuple.second <| List.head <| List.reverse dataPoints
@@ -42,7 +42,7 @@ view model =
                 ]
             , div [ class "input-box" ]
                 [ label [] [ text "Starting Principal:" ]
-                , input [ placeholder <| toString initialState.firstParam.initialPrincipal ++ " EUR", onInput (NewParam 0 << Principal) ] []
+                , input [ placeholder <| toString initialState.initialPrincipal ++ " EUR", onInput Principal ] []
                 ]
             , div [ class "input-box" ]
                 [ label [] [ text "Monthly Contribution:" ]

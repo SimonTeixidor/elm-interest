@@ -5,7 +5,6 @@ import Date
 
 type ParamUpdate
     = Interest String
-    | Principal String
     | Duration String
     | Contribution String
     | ContributionRate String
@@ -14,5 +13,6 @@ type ParamUpdate
 
 type Msg
     = NewParam Int ParamUpdate
+    | Principal String
     | NewDate Date.Date
     | ShowAdvanced Bool

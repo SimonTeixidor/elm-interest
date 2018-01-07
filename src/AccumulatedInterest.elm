@@ -5,8 +5,8 @@ import Date.Extra.Duration as Duration
 import Model exposing (CalcParams, Model)
 
 
-valueAtYear : CalcParams -> Float -> Float
-valueAtYear m years =
+valueAtYear : CalcParams -> Float -> Float -> Float
+valueAtYear m principal years =
     let
         rate =
             m.interest / m.compoundingPerYear / 100
@@ -25,7 +25,7 @@ valueAtYear m years =
             m.compoundingPerYear * years
 
         compoundInterest =
-            m.initialPrincipal * (1 + rate) ^ compounds
+            principal * (1 + rate) ^ compounds
 
         contribution =
             m.contribution * 12 / m.compoundingPerYear
@@ -36,20 +36,44 @@ valueAtYear m years =
     futureValueOfSeries + compoundInterest
 
 
-accumulatedInterest : CalcParams -> Date.Date -> List ( Date.Date, Float )
-accumulatedInterest params currentDate =
+last : List a -> Maybe a
+last =
+    List.head << List.reverse
+
+
+accumulatedInterest : Model -> List ( Date.Date, Float )
+accumulatedInterest model =
     let
         resolution =
             100
 
-        years =
+        years params =
             List.range 0 100
                 |> List.map toFloat
                 |> List.map ((*) (toFloat params.years / resolution))
 
-        dateAfterYears y =
-            Duration.add Duration.Day (floor (y * 365)) currentDate
+        dateAfterYears start y =
+            Duration.add Duration.Day (floor (y * 365)) start
+
+        calc params principal =
+            List.map2 (,)
+                (years params)
+                (List.map (valueAtYear params principal) <| years params)
     in
-    List.map2 (,)
-        (List.map dateAfterYears years)
-        (List.map (valueAtYear params) years)
+    List.map (\( year, amount ) -> ( dateAfterYears model.currentDate year, amount )) <|
+        List.foldr
+            (\params lst ->
+                let
+                    lastAmount =
+                        Maybe.withDefault 0 <| last <| List.map Tuple.second lst
+
+                    lastYear =
+                        Maybe.withDefault 0 <| last <| List.map Tuple.first lst
+
+                    newVals =
+                        calc params lastAmount
+                in
+                lst ++ List.map (\( year, amount ) -> ( year + lastYear, amount )) newVals
+            )
+            (calc model.firstParam model.initialPrincipal)
+            model.parameters
