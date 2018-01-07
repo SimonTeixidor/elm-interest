@@ -1,28 +1,41 @@
-module Model exposing (Model, initialState)
+module Model exposing (CalcParams, Model, initialState)
 
 import Date
 
 
-type alias Model =
-    { interest : Float
+type alias CalcParams =
+    { id : Int
+    , interest : Float
     , years : Int
     , initialPrincipal : Float
     , contribution : Float
     , contributionGrowthRate : Float
-    , currentDate : Date.Date
     , compoundingPerYear : Float
+    }
+
+
+type alias Model =
+    { firstParam : CalcParams
+    , parameters : List CalcParams
+    , currentDate : Date.Date
     , showAdvanced : Bool
+    , uid : Int
     }
 
 
 initialState : Model
 initialState =
-    { interest = 7
-    , years = 10
-    , initialPrincipal = 1000
-    , contribution = 100
-    , contributionGrowthRate = 0
+    { firstParam =
+        { id = 1
+        , interest = 7
+        , years = 10
+        , initialPrincipal = 1000
+        , contribution = 100
+        , contributionGrowthRate = 0
+        , compoundingPerYear = 1
+        }
+    , parameters = []
     , currentDate = Date.fromTime 0
-    , compoundingPerYear = 1
     , showAdvanced = False
+    , uid = 1
     }

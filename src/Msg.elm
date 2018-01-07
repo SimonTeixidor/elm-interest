@@ -1,14 +1,18 @@
-module Msg exposing (Msg(..))
+module Msg exposing (Msg(..), ParamUpdate(..))
 
 import Date
 
 
-type Msg
+type ParamUpdate
     = Interest String
     | Principal String
     | Duration String
     | Contribution String
-    | NewDate Date.Date
     | ContributionRate String
     | CompoundPerYear String
+
+
+type Msg
+    = NewParam Int ParamUpdate
+    | NewDate Date.Date
     | ShowAdvanced Bool

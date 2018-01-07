@@ -1,62 +1,91 @@
 module Update exposing (update)
 
-import Model exposing (Model)
-import Msg exposing (Msg(..))
+import Model exposing (CalcParams, Model)
+import Msg exposing (Msg(..), ParamUpdate(..))
+
+
+updateParamId : Int -> (CalcParams -> CalcParams) -> List CalcParams -> List CalcParams
+updateParamId id f =
+    List.map
+        (\p ->
+            if p.id == id then
+                f p
+            else
+                p
+        )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Interest s ->
-            case String.toFloat s of
-                Ok f ->
-                    ( { model | interest = f }, Cmd.none )
+        NewParam id paramUpdate ->
+            let
+                updateFunc =
+                    \p ->
+                        case paramUpdate of
+                            Interest s ->
+                                case String.toFloat s of
+                                    Ok f ->
+                                        { p | interest = f }
 
-                Err e ->
-                    ( model, Cmd.none )
+                                    Err e ->
+                                        p
 
-        Principal s ->
-            case String.toFloat s of
-                Ok f ->
-                    ( { model | initialPrincipal = f }, Cmd.none )
+                            Principal s ->
+                                case String.toFloat s of
+                                    Ok f ->
+                                        { p | initialPrincipal = f }
 
-                Err e ->
-                    ( model, Cmd.none )
+                                    Err e ->
+                                        p
 
-        Duration s ->
-            case String.toInt s of
-                Ok i ->
-                    ( { model | years = i }, Cmd.none )
+                            Duration s ->
+                                case String.toInt s of
+                                    Ok i ->
+                                        { p | years = i }
 
-                Err e ->
-                    ( model, Cmd.none )
+                                    Err e ->
+                                        p
 
-        Contribution s ->
-            case String.toFloat s of
-                Ok f ->
-                    ( { model | contribution = f }, Cmd.none )
+                            Contribution s ->
+                                case String.toFloat s of
+                                    Ok f ->
+                                        { p | contribution = f }
 
-                Err e ->
-                    ( model, Cmd.none )
+                                    Err e ->
+                                        p
+
+                            ContributionRate s ->
+                                case String.toFloat s of
+                                    Ok f ->
+                                        { p | contributionGrowthRate = f }
+
+                                    Err e ->
+                                        p
+
+                            CompoundPerYear s ->
+                                case String.toFloat s of
+                                    Ok f ->
+                                        { p | compoundingPerYear = f }
+
+                                    Err e ->
+                                        p
+            in
+            if id == 0 then
+                let
+                    firstParam =
+                        updateFunc model.firstParam
+                in
+                ( { model | firstParam = firstParam }, Cmd.none )
+            else
+                let
+                    params =
+                        updateParamId id updateFunc model.parameters
+                in
+                ( { model | parameters = params }, Cmd.none )
 
         NewDate d ->
             ( { model | currentDate = d }, Cmd.none )
-
-        ContributionRate s ->
-            case String.toFloat s of
-                Ok f ->
-                    ( { model | contributionGrowthRate = f }, Cmd.none )
-
-                Err e ->
-                    ( model, Cmd.none )
-
-        CompoundPerYear s ->
-            case String.toFloat s of
-                Ok f ->
-                    ( { model | compoundingPerYear = f }, Cmd.none )
-
-                Err e ->
-                    ( model, Cmd.none )
 
         ShowAdvanced b ->
             ( { model | showAdvanced = b }, Cmd.none )

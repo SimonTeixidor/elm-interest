@@ -2,10 +2,10 @@ module AccumulatedInterest exposing (accumulatedInterest)
 
 import Date
 import Date.Extra.Duration as Duration
-import Model exposing (Model)
+import Model exposing (CalcParams, Model)
 
 
-valueAtYear : Model -> Float -> Float
+valueAtYear : CalcParams -> Float -> Float
 valueAtYear m years =
     let
         rate =
@@ -36,8 +36,8 @@ valueAtYear m years =
     futureValueOfSeries + compoundInterest
 
 
-accumulatedInterest : Model -> List ( Date.Date, Float )
-accumulatedInterest model =
+accumulatedInterest : CalcParams -> Date.Date -> List ( Date.Date, Float )
+accumulatedInterest params currentDate =
     let
         resolution =
             100
@@ -45,14 +45,11 @@ accumulatedInterest model =
         years =
             List.range 0 100
                 |> List.map toFloat
-                |> List.map ((*) (toFloat model.years / resolution))
+                |> List.map ((*) (toFloat params.years / resolution))
 
         dateAfterYears y =
-            Duration.add Duration.Day (floor (y * 365)) model.currentDate
-
-        interest =
-            model.interest / 100
+            Duration.add Duration.Day (floor (y * 365)) currentDate
     in
     List.map2 (,)
         (List.map dateAfterYears years)
-        (List.map (valueAtYear model) years)
+        (List.map (valueAtYear params) years)

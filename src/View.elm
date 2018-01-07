@@ -8,14 +8,14 @@ import Html.Attributes exposing (class, id, maxlength, placeholder, type_, value
 import Html.Events exposing (onCheck, onInput)
 import LineChart exposing (lineChart)
 import Model exposing (Model, initialState)
-import Msg exposing (Msg(..))
+import Msg exposing (Msg(..), ParamUpdate(..))
 
 
 view : Model -> Html Msg
 view model =
     let
         dataPoints =
-            accumulatedInterest model
+            accumulatedInterest model.firstParam model.currentDate
 
         finalNumber =
             Maybe.withDefault 0 <| Maybe.map Tuple.second <| List.head <| List.reverse dataPoints
@@ -27,13 +27,13 @@ view model =
             [ div [ class "input-box" ]
                 [ label [] [ text "Yearly Return:" ]
                 , if model.showAdvanced then
-                    input [ placeholder <| toString initialState.interest ++ "%", onInput Interest ] []
+                    input [ placeholder <| toString initialState.firstParam.interest ++ "%", onInput (NewParam 0 << Interest) ] []
                   else
                     let
                         stockReturn =
-                            toString initialState.interest
+                            toString initialState.firstParam.interest
                     in
-                    select [ onInput Interest ]
+                    select [ onInput (NewParam 0 << Interest) ]
                         [ option [ value stockReturn ]
                             [ text ("Stocks: " ++ stockReturn ++ "%") ]
                         , option [ value "3.5" ] [ text "Bonds: 3.5%" ]
@@ -42,26 +42,26 @@ view model =
                 ]
             , div [ class "input-box" ]
                 [ label [] [ text "Starting Principal:" ]
-                , input [ placeholder <| toString initialState.initialPrincipal ++ " EUR", onInput Principal ] []
+                , input [ placeholder <| toString initialState.firstParam.initialPrincipal ++ " EUR", onInput (NewParam 0 << Principal) ] []
                 ]
             , div [ class "input-box" ]
                 [ label [] [ text "Monthly Contribution:" ]
-                , input [ placeholder <| toString initialState.contribution ++ " EUR", onInput Contribution ] []
+                , input [ placeholder <| toString initialState.firstParam.contribution ++ " EUR", onInput (NewParam 0 << Contribution) ] []
                 ]
             , div [ class "input-box" ]
                 [ label [] [ text "Duration (years):" ]
-                , input [ placeholder <| toString initialState.years, onInput Duration, maxlength 2 ] []
+                , input [ placeholder <| toString initialState.firstParam.years, onInput (NewParam 0 << Duration), maxlength 2 ] []
                 ]
             ]
 
         advancedParamForms =
             [ div [ class "input-box" ]
                 [ label [] [ text "Contribution Growth:" ]
-                , input [ placeholder <| toString initialState.contributionGrowthRate ++ " %", onInput ContributionRate ] []
+                , input [ placeholder <| toString initialState.firstParam.contributionGrowthRate ++ " %", onInput (NewParam 0 << ContributionRate) ] []
                 ]
             , div [ class "input-box" ]
                 [ label [] [ text "Compound Frequency:" ]
-                , select [ onInput CompoundPerYear ]
+                , select [ onInput (NewParam 0 << CompoundPerYear) ]
                     [ option [ value "1" ] [ text "Yearly" ]
                     , option [ value "6" ] [ text "Semi Anually" ]
                     , option [ value "12" ] [ text "Monthly" ]
@@ -88,6 +88,6 @@ view model =
             [ h3 [] [ text <| "Final balance: " ++ formattedBalance ]
             ]
         , div [ class "row", id "plot" ]
-            [ lineChart <| accumulatedInterest model
+            [ lineChart <| dataPoints
             ]
         ]
