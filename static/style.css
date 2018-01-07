@@ -51,7 +51,11 @@ html {
 }
 
 h1,h2,h3 {
-	font-family: 'Helvetica',sans-serif;
+	font-family:Georgia,serif;
+	font-variant: small-caps;
+	text-transform: none;
+	font-weight: 100;
+	margin-bottom: 0.2em;
 }
 
 body {
@@ -59,6 +63,7 @@ body {
 	max-width: 40em;
 	font-family: 'Georgia','Cambria',serif;
 	font-size: 1.3em;
+	color: #4E443C;
 	border-style: solid;
 	border-color: transparent;
 	border-width: 0 0.5em 1em 0.5em;
