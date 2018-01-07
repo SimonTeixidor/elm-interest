@@ -31,10 +31,6 @@ maxResult =
     Maybe.withDefault 0 << List.maximum << List.map Tuple.second
 
 
-closeEnough a b =
-    Expect.lessThan 0.0001 <| abs (a - b)
-
-
 iteratingInterest : Int -> Float -> Float -> Float
 iteratingInterest years principal discount =
     List.foldr (always ((*) discount)) principal <| List.range 1 years
@@ -54,12 +50,12 @@ testWithoutContribution =
                     model =
                         { allZeroesModel | interest = 5, years = 10, initialPrincipal = 100 }
                 in
-                closeEnough
+                Expect.within (Expect.Relative 0.1)
                     (AccumulatedInterest.accumulatedInterest model zeroDate |> maxResult)
                     (iteratingInterest 10 100 1.05)
         , test "10 years of only contributions" <|
             \() ->
-                closeEnough
+                Expect.within (Expect.Relative 0.1)
                     (AccumulatedInterest.accumulatedInterest
                         { allZeroesModel | years = 10, contribution = 10 }
                         zeroDate
@@ -68,7 +64,7 @@ testWithoutContribution =
                     (10 * 10 * 12)
         , test "10 years with contributions and interest" <|
             \() ->
-                closeEnough
+                Expect.within (Expect.Relative 0.1)
                     (AccumulatedInterest.accumulatedInterest
                         { allZeroesModel
                             | years = 10
@@ -81,7 +77,7 @@ testWithoutContribution =
                     (iteratingContributionInterest 10 120 1.05)
         , test "10 years with contributions, initial, and interest" <|
             \() ->
-                closeEnough
+                Expect.within (Expect.Relative 0.1)
                     (AccumulatedInterest.accumulatedInterest
                         { allZeroesModel
                             | years = 10
