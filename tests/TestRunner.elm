@@ -111,6 +111,32 @@ testWithoutContribution =
                         |> maxResult
                     )
                     (iteratingContributionInterest 10 120 1.05 + iteratingInterest 10 10000 1.05)
+        , test "10 years and then 10 years with other interest" <|
+            \() ->
+                let
+                    firstParam =
+                        allZeroesModel.firstParam
+                in
+                Expect.within (Expect.Relative 0.1)
+                    (AccumulatedInterest.accumulatedInterest
+                        { allZeroesModel
+                            | firstParam =
+                                { firstParam
+                                    | years = 10
+                                    , contribution = 10
+                                    , interest = 5
+                                }
+                            , initialPrincipal = 10000
+                            , parameters = [ { firstParam | years = 10, contribution = 10, interest = 8 } ]
+                        }
+                        |> maxResult
+                    )
+                    (let
+                        first =
+                            iteratingContributionInterest 10 120 1.05 + iteratingInterest 10 10000 1.05
+                     in
+                     iteratingContributionInterest 10 120 1.08 + iteratingInterest 10 first 1.08
+                    )
         ]
 
 
