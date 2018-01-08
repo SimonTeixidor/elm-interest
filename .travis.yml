@@ -33,7 +33,7 @@ script:
   - uglifyjs static/elm.js -mc 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9"' --output out/elm.js
   - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-static-html -f src/InitialView.elm -o static/main.html
   - cat static/intro1.html static/style.css static/intro2.html static/main.html static/outro.html > out/index.html
-  - cp static/favicon.ico static/CNAME out/
+  - cp static/favicon.ico static/logo.png static/CNAME out/
 
 deploy:
   provider: pages
