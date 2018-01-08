@@ -63,7 +63,7 @@ update msg model =
                                     Err e ->
                                         p
             in
-            if id == 0 then
+            if id == model.firstParam.id then
                 let
                     firstParam =
                         updateFunc model.firstParam

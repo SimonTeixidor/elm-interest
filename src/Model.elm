@@ -1,4 +1,4 @@
-module Model exposing (CalcParams, Model, initialState)
+module Model exposing (CalcParams, Model, initialCalcParams, initialState)
 
 import Date
 
@@ -23,16 +23,20 @@ type alias Model =
     }
 
 
+initialCalcParams : CalcParams
+initialCalcParams =
+    { id = 1
+    , interest = 7
+    , years = 10
+    , contribution = 100
+    , contributionGrowthRate = 0
+    , compoundingPerYear = 1
+    }
+
+
 initialState : Model
 initialState =
-    { firstParam =
-        { id = 1
-        , interest = 7
-        , years = 10
-        , contribution = 100
-        , contributionGrowthRate = 0
-        , compoundingPerYear = 1
-        }
+    { firstParam = initialCalcParams
     , initialPrincipal = 1000
     , parameters = []
     , currentDate = Date.fromTime 0

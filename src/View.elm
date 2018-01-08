@@ -7,7 +7,7 @@ import Html exposing (Attribute, Html, br, div, h3, input, label, option, p, sel
 import Html.Attributes exposing (class, id, maxlength, placeholder, type_, value)
 import Html.Events exposing (onCheck, onInput)
 import LineChart exposing (lineChart)
-import Model exposing (Model, initialState)
+import Model exposing (CalcParams, Model, initialCalcParams, initialState)
 import Msg exposing (Msg(..), ParamUpdate(..))
 
 
@@ -22,64 +22,12 @@ view model =
 
         formattedBalance =
             FormatNumber.format { frenchLocale | decimals = 2 } finalNumber
-
-        simpleParamForms =
-            [ div [ class "input-box" ]
-                [ label [] [ text "Yearly Return:" ]
-                , if model.showAdvanced then
-                    input [ placeholder <| toString initialState.firstParam.interest ++ "%", onInput (NewParam 0 << Interest) ] []
-                  else
-                    let
-                        stockReturn =
-                            toString initialState.firstParam.interest
-                    in
-                    select [ onInput (NewParam 0 << Interest) ]
-                        [ option [ value stockReturn ]
-                            [ text ("Stocks: " ++ stockReturn ++ "%") ]
-                        , option [ value "3.5" ] [ text "Bonds: 3.5%" ]
-                        , option [ value "-1" ] [ text "Savings Account: -1%" ]
-                        ]
-                ]
-            , div [ class "input-box" ]
-                [ label [] [ text "Starting Principal:" ]
-                , input [ placeholder <| toString initialState.initialPrincipal ++ " EUR", onInput Principal ] []
-                ]
-            , div [ class "input-box" ]
-                [ label [] [ text "Monthly Contribution:" ]
-                , input [ placeholder <| toString initialState.firstParam.contribution ++ " EUR", onInput (NewParam 0 << Contribution) ] []
-                ]
-            , div [ class "input-box" ]
-                [ label [] [ text "Duration (years):" ]
-                , input [ placeholder <| toString initialState.firstParam.years, onInput (NewParam 0 << Duration), maxlength 2 ] []
-                ]
-            ]
-
-        advancedParamForms =
-            [ div [ class "input-box" ]
-                [ label [] [ text "Contribution Growth:" ]
-                , input [ placeholder <| toString initialState.firstParam.contributionGrowthRate ++ " %", onInput (NewParam 0 << ContributionRate) ] []
-                ]
-            , div [ class "input-box" ]
-                [ label [] [ text "Compound Frequency:" ]
-                , select [ onInput (NewParam 0 << CompoundPerYear) ]
-                    [ option [ value "1" ] [ text "Yearly" ]
-                    , option [ value "6" ] [ text "Semi Anually" ]
-                    , option [ value "12" ] [ text "Monthly" ]
-                    , option [ value "365" ] [ text "Daily" ]
-                    ]
-                ]
-            ]
     in
     div []
         [ div [ class "row" ]
             [ h3 [ class "left" ] [ text "Settings:" ]
             ]
-        , div [ class "row" ]
-            (if model.showAdvanced then
-                simpleParamForms ++ advancedParamForms
-             else
-                simpleParamForms
-            )
+        , div [] (List.map (calcParamsView model.showAdvanced) (model.firstParam :: model.parameters))
         , div [ class "row" ]
             [ label [] [ text "Show advanced parameters:" ]
             , input [ type_ "checkbox", onCheck ShowAdvanced ] []
@@ -91,3 +39,63 @@ view model =
             [ lineChart <| dataPoints
             ]
         ]
+
+
+calcParamsView : Bool -> CalcParams -> Html Msg
+calcParamsView showAdvanced params =
+    div [ class "row" ] <|
+        -- Principal is only showed for the first form
+        (if params.id == initialCalcParams.id then
+            [ div [ class "input-box" ]
+                [ label [] [ text "Starting Principal:" ]
+                , input [ placeholder <| toString initialState.initialPrincipal ++ " EUR", onInput Principal ] []
+                ]
+            ]
+         else
+            []
+        )
+            -- All forms show the basic parameters
+            ++ [ div [ class "input-box" ]
+                    [ label [] [ text "Yearly Return:" ]
+                    , if showAdvanced then
+                        input [ placeholder <| toString initialState.firstParam.interest ++ "%", onInput (NewParam params.id << Interest) ] []
+                      else
+                        let
+                            stockReturn =
+                                toString initialState.firstParam.interest
+                        in
+                        select [ onInput (NewParam params.id << Interest) ]
+                            [ option [ value stockReturn ]
+                                [ text ("Stocks: " ++ stockReturn ++ "%") ]
+                            , option [ value "3.5" ] [ text "Bonds: 3.5%" ]
+                            , option [ value "-1" ] [ text "Savings Account: -1%" ]
+                            ]
+                    ]
+               , div [ class "input-box" ]
+                    [ label [] [ text "Monthly Contribution:" ]
+                    , input [ placeholder <| toString initialState.firstParam.contribution ++ " EUR", onInput (NewParam params.id << Contribution) ] []
+                    ]
+               , div [ class "input-box" ]
+                    [ label [] [ text "Duration (years):" ]
+                    , input [ placeholder <| toString initialState.firstParam.years, onInput (NewParam params.id << Duration), maxlength 2 ] []
+                    ]
+               ]
+            -- Show advanced settings, if enabled
+            ++ (if showAdvanced then
+                    [ div [ class "input-box" ]
+                        [ label [] [ text "Contribution Growth:" ]
+                        , input [ placeholder <| toString initialState.firstParam.contributionGrowthRate ++ " %", onInput (NewParam params.id << ContributionRate) ] []
+                        ]
+                    , div [ class "input-box" ]
+                        [ label [] [ text "Compound Frequency:" ]
+                        , select [ onInput (NewParam 0 << CompoundPerYear) ]
+                            [ option [ value "1" ] [ text "Yearly" ]
+                            , option [ value "6" ] [ text "Semi Anually" ]
+                            , option [ value "12" ] [ text "Monthly" ]
+                            , option [ value "365" ] [ text "Daily" ]
+                            ]
+                        ]
+                    ]
+                else
+                    []
+               )
