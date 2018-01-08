@@ -16,3 +16,4 @@ type Msg
     | Principal String
     | NewDate Date.Date
     | ShowAdvanced Bool
+    | AddParamGroup

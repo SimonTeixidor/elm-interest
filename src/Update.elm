@@ -1,6 +1,6 @@
 module Update exposing (update)
 
-import Model exposing (CalcParams, Model)
+import Model exposing (CalcParams, Model, initialCalcParams)
 import Msg exposing (Msg(..), ParamUpdate(..))
 
 
@@ -75,6 +75,18 @@ update msg model =
                         updateParamId id updateFunc model.parameters
                 in
                 ( { model | parameters = params }, Cmd.none )
+
+        AddParamGroup ->
+            let
+                params =
+                    model.parameters
+
+                newId =
+                    model.uid + 1
+            in
+            ( { model | parameters = { initialCalcParams | id = newId } :: params, uid = newId }
+            , Cmd.none
+            )
 
         Principal s ->
             ( case String.toFloat s of

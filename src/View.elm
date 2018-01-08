@@ -3,9 +3,9 @@ module View exposing (view)
 import AccumulatedInterest exposing (accumulatedInterest)
 import FormatNumber
 import FormatNumber.Locales exposing (frenchLocale)
-import Html exposing (Attribute, Html, br, div, h3, input, label, option, p, select, text)
+import Html exposing (Attribute, Html, br, button, div, h2, h3, input, label, option, p, select, text)
 import Html.Attributes exposing (class, id, maxlength, placeholder, type_, value)
-import Html.Events exposing (onCheck, onInput)
+import Html.Events exposing (onCheck, onClick, onInput)
 import LineChart exposing (lineChart)
 import Model exposing (CalcParams, Model, initialCalcParams, initialState)
 import Msg exposing (Msg(..), ParamUpdate(..))
@@ -25,12 +25,24 @@ view model =
     in
     div []
         [ div [ class "row" ]
-            [ h3 [ class "left" ] [ text "Settings:" ]
-            ]
-        , div [] (List.map (calcParamsView model.showAdvanced) (model.firstParam :: model.parameters))
+            ([ h2 [] [ text "Settings" ] ]
+                ++ List.map (p [] << List.singleton << text) settingsIntro
+            )
+        , div []
+            ([ h3 []
+                [ text "First:"
+                ]
+             ]
+                ++ (List.intersperse (h3 [] [ text "And then:" ]) <|
+                        List.map (calcParamsView model.showAdvanced) (model.firstParam :: model.parameters)
+                   )
+            )
         , div [ class "row" ]
-            [ label [] [ text "Show advanced parameters:" ]
-            , input [ type_ "checkbox", onCheck ShowAdvanced ] []
+            [ div [ onClick AddParamGroup, class "plus" ] []
+            , div []
+                [ label [] [ text "Show advanced parameters:" ]
+                , input [ type_ "checkbox", onCheck ShowAdvanced ] []
+                ]
             ]
         , div [ class "row" ]
             [ h3 [] [ text <| "Final balance: " ++ formattedBalance ]
@@ -99,3 +111,9 @@ calcParamsView showAdvanced params =
                 else
                     []
                )
+
+
+settingsIntro : List String
+settingsIntro =
+    [ "These parameters determine the final balance. By adding multiple configurations with the plus button, it is possible to change the parameters over time (e.g, save 100 EUR per month for 10 years, then 150 for 10 years)."
+    ]
