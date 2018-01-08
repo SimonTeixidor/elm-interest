@@ -50,6 +50,10 @@ html {
 	padding-right: 1em;
 }
 
+h1 img {
+	height: 2em;
+}
+
 h1,h2,h3 {
 	font-family:Georgia,serif;
 	font-variant: small-caps;
