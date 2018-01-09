@@ -11,7 +11,7 @@ html {
 	float: left;
 	margin-right: 1em;
 	padding: 0.3em;
-	width: 12em;
+	width: 11em;
 }
 
 .input-box label, .input-box input, .input-box select {
@@ -35,10 +35,13 @@ html {
 	}
 }
 
+@media screen and (max-width: 1000px) {
+}
+
 .row {
 	width: 100%;
-	margin-top: 1em;
-	display: inline-block;
+	display: flex;
+	flex-wrap: wrap;
 }
 
 #plot {
@@ -53,6 +56,16 @@ html {
 
 h1 img {
 	height: 2em;
+	display: block;
+	margin: auto;
+}
+
+#header {
+	text-align: center;
+}
+
+h1 {
+	text-align: center;
 }
 
 h1,h2,h3 {
