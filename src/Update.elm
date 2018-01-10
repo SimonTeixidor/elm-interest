@@ -1,6 +1,6 @@
 module Update exposing (update)
 
-import Model exposing (CalcParams, Model, initialCalcParams)
+import Model exposing (CalcParams, Model, initialCalcParams, toBase64)
 import Msg exposing (Msg(..), ParamUpdate(..))
 
 
@@ -17,98 +17,94 @@ updateParamId id f =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        NewParam id paramUpdate ->
-            let
-                updateFunc =
-                    \p ->
-                        case paramUpdate of
-                            Interest s ->
-                                case String.toFloat s of
-                                    Ok f ->
-                                        { p | interest = f }
+    let
+        ( newModel, action ) =
+            case msg of
+                NewParam id paramUpdate ->
+                    if id == model.firstParam.id then
+                        ( { model | firstParam = updateCalcParams paramUpdate model.firstParam }, Cmd.none )
+                    else
+                        ( { model | parameters = updateParamId id (updateCalcParams paramUpdate) model.parameters }, Cmd.none )
 
-                                    Err e ->
-                                        p
+                AddParamGroup ->
+                    let
+                        params =
+                            model.parameters
 
-                            Duration s ->
-                                case String.toInt s of
-                                    Ok i ->
-                                        { p | years = i }
+                        newId =
+                            model.uid + 1
+                    in
+                    ( { model | parameters = params ++ [ { initialCalcParams | id = newId } ], uid = newId }
+                    , Cmd.none
+                    )
 
-                                    Err e ->
-                                        p
+                RemoveParamGroup i ->
+                    let
+                        params =
+                            model.parameters
+                    in
+                    ( { model | parameters = List.filter ((/=) i << .id) params }
+                    , Cmd.none
+                    )
 
-                            Contribution s ->
-                                case String.toFloat s of
-                                    Ok f ->
-                                        { p | contribution = f }
+                Principal s ->
+                    ( case String.toFloat s of
+                        Ok f ->
+                            { model | initialPrincipal = f }
 
-                                    Err e ->
-                                        p
+                        Err e ->
+                            model
+                    , Cmd.none
+                    )
 
-                            ContributionRate s ->
-                                case String.toFloat s of
-                                    Ok f ->
-                                        { p | contributionGrowthRate = f }
+                NewDate d ->
+                    ( { model | currentDate = d }, Cmd.none )
 
-                                    Err e ->
-                                        p
+                ShowAdvanced b ->
+                    ( { model | showAdvanced = b }, Cmd.none )
+    in
+    ( { newModel | shareLink = toBase64 newModel }, action )
 
-                            CompoundPerYear s ->
-                                case String.toFloat s of
-                                    Ok f ->
-                                        { p | compoundingPerYear = f }
 
-                                    Err e ->
-                                        p
-            in
-            if id == model.firstParam.id then
-                let
-                    firstParam =
-                        updateFunc model.firstParam
-                in
-                ( { model | firstParam = firstParam }, Cmd.none )
-            else
-                let
-                    params =
-                        updateParamId id updateFunc model.parameters
-                in
-                ( { model | parameters = params }, Cmd.none )
-
-        AddParamGroup ->
-            let
-                params =
-                    model.parameters
-
-                newId =
-                    model.uid + 1
-            in
-            ( { model | parameters = params ++ [ { initialCalcParams | id = newId } ], uid = newId }
-            , Cmd.none
-            )
-
-        RemoveParamGroup i ->
-            let
-                params =
-                    model.parameters
-            in
-            ( { model | parameters = List.filter ((/=) i << .id) params }
-            , Cmd.none
-            )
-
-        Principal s ->
-            ( case String.toFloat s of
+updateCalcParams : ParamUpdate -> CalcParams -> CalcParams
+updateCalcParams paramUpdate p =
+    case paramUpdate of
+        Interest s ->
+            case String.toFloat s of
                 Ok f ->
-                    { model | initialPrincipal = f }
+                    { p | interest = f }
 
                 Err e ->
-                    model
-            , Cmd.none
-            )
+                    p
 
-        NewDate d ->
-            ( { model | currentDate = d }, Cmd.none )
+        Duration s ->
+            case String.toInt s of
+                Ok i ->
+                    { p | years = i }
 
-        ShowAdvanced b ->
-            ( { model | showAdvanced = b }, Cmd.none )
+                Err e ->
+                    p
+
+        Contribution s ->
+            case String.toFloat s of
+                Ok f ->
+                    { p | contribution = f }
+
+                Err e ->
+                    p
+
+        ContributionRate s ->
+            case String.toFloat s of
+                Ok f ->
+                    { p | contributionGrowthRate = f }
+
+                Err e ->
+                    p
+
+        CompoundPerYear s ->
+            case String.toFloat s of
+                Ok f ->
+                    { p | compoundingPerYear = f }
+
+                Err e ->
+                    p

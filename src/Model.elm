@@ -24,6 +24,7 @@ type alias Model =
     , currentDate : Date.Date
     , showAdvanced : Bool
     , uid : Int
+    , shareLink : String
     }
 
 
@@ -46,6 +47,7 @@ initialState =
     , currentDate = Date.fromTime 0
     , showAdvanced = False
     , uid = 1
+    , shareLink = ""
     }
 
 
@@ -62,44 +64,44 @@ fromBase64 =
 decodeCalcParams : JsonD.Decoder CalcParams
 decodeCalcParams =
     decode CalcParams
-        |> required "id" JsonD.int
-        |> required "interest" JsonD.float
-        |> required "years" JsonD.int
-        |> required "contribution" JsonD.float
-        |> required "contribution_growth_rate" JsonD.float
-        |> required "compounding_per_year" JsonD.float
+        |> required "i" JsonD.int
+        |> required "a" JsonD.float
+        |> required "y" JsonD.int
+        |> required "b" JsonD.float
+        |> required "c" JsonD.float
+        |> required "d" JsonD.float
 
 
 decodeModel : JsonD.Decoder Model
 decodeModel =
     decode Model
-        |> required "first_param" decodeCalcParams
-        |> required "initial_principal" JsonD.float
-        |> required "parameters" (JsonD.list decodeCalcParams)
-        |> required "current_date" (JsonD.map Date.fromTime JsonD.float)
-        |> required "show_advanced" JsonD.bool
-        |> required "uid" JsonD.int
+        |> required "f" decodeCalcParams
+        |> required "i" JsonD.float
+        |> required "p" (JsonD.list decodeCalcParams)
+        |> hardcoded (Date.fromTime 0)
+        |> required "s" JsonD.bool
+        |> required "u" JsonD.int
+        |> hardcoded ""
 
 
 encodeCalcParams : CalcParams -> JsonE.Value
 encodeCalcParams record =
     JsonE.object
-        [ ( "id", JsonE.int record.id )
-        , ( "interest", JsonE.float record.interest )
-        , ( "years", JsonE.int record.years )
-        , ( "contribution", JsonE.float record.contribution )
-        , ( "contribution_growth_rate", JsonE.float record.contributionGrowthRate )
-        , ( "compounding_per_year", JsonE.float record.compoundingPerYear )
+        [ ( "i", JsonE.int record.id )
+        , ( "a", JsonE.float record.interest )
+        , ( "y", JsonE.int record.years )
+        , ( "b", JsonE.float record.contribution )
+        , ( "c", JsonE.float record.contributionGrowthRate )
+        , ( "d", JsonE.float record.compoundingPerYear )
         ]
 
 
 encodeModel : Model -> JsonE.Value
 encodeModel record =
     JsonE.object
-        [ ( "first_param", encodeCalcParams record.firstParam )
-        , ( "initial_principal", JsonE.float record.initialPrincipal )
-        , ( "parameters", JsonE.list <| List.map encodeCalcParams record.parameters )
-        , ( "current_date", JsonE.float <| Date.toTime record.currentDate )
-        , ( "show_advanced", JsonE.bool record.showAdvanced )
-        , ( "uid", JsonE.int record.uid )
+        [ ( "f", encodeCalcParams record.firstParam )
+        , ( "i", JsonE.float record.initialPrincipal )
+        , ( "p", JsonE.list <| List.map encodeCalcParams record.parameters )
+        , ( "s", JsonE.bool record.showAdvanced )
+        , ( "u", JsonE.int record.uid )
         ]

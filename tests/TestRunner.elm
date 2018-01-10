@@ -5,7 +5,7 @@ import Date
 import Expect
 import Fuzz exposing (..)
 import LineChart exposing (yearPositions)
-import Model
+import Model exposing (fromBase64, toBase64)
 import Test exposing (..)
 
 
@@ -24,6 +24,7 @@ allZeroesModel =
     , currentDate = Date.fromTime 0
     , showAdvanced = False
     , uid = 0
+    , shareLink = ""
     }
 
 
@@ -42,8 +43,15 @@ iteratingContributionInterest years contribution discount =
     List.foldr (\x y -> contribution + discount * y) 0 <| List.map toFloat <| List.range 1 years
 
 
-testWithoutContribution : Test
-testWithoutContribution =
+testDecodeEncode : Test
+testDecodeEncode =
+    test "The model should encode and decode without errors." <|
+        \() ->
+            Expect.equal (Ok allZeroesModel) <| fromBase64 <| toBase64 allZeroesModel
+
+
+testBasics : Test
+testBasics =
     describe "Basic assumptions"
         [ test "10 years of interest with no contribution." <|
             \() ->
@@ -166,6 +174,7 @@ testNoNaN =
                     , currentDate = Date.fromTime 0
                     , showAdvanced = False
                     , uid = 0
+                    , shareLink = ""
                     }
             in
             Expect.false "Expected the calculation to not yield NaN."
