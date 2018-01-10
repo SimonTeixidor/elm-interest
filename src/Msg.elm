@@ -17,3 +17,4 @@ type Msg
     | NewDate Date.Date
     | ShowAdvanced Bool
     | AddParamGroup
+    | RemoveParamGroup Int

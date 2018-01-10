@@ -84,7 +84,16 @@ update msg model =
                 newId =
                     model.uid + 1
             in
-            ( { model | parameters = { initialCalcParams | id = newId } :: params, uid = newId }
+            ( { model | parameters = params ++ [ { initialCalcParams | id = newId } ], uid = newId }
+            , Cmd.none
+            )
+
+        RemoveParamGroup i ->
+            let
+                params =
+                    model.parameters
+            in
+            ( { model | parameters = List.filter ((/=) i << .id) params }
             , Cmd.none
             )
 

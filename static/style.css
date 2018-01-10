@@ -90,26 +90,3 @@ body {
 a {
 	text-decoration: none;
 }
-
-.plus {
-	float: left;
-	margin-right: 1em;
-	border-radius: 50%;
-	width: 22px;
-	height: 22px;
-	background-color: rgb(44,108,128)
-}
-
-.plus::before {
-	content: "+";
-	width: 22px;
-	height: 22px;
-	font-size: 22px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	font-weight: bold;
-	font-family: courier;
-	color: white;
-}
