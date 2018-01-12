@@ -2,7 +2,7 @@ module Main exposing (..)
 
 import Date
 import Html
-import Model exposing (Model, initialState)
+import Model exposing (Model, init)
 import Msg exposing (Msg(..))
 import Task
 import Update exposing (update)
@@ -10,11 +10,12 @@ import View exposing (view)
 
 
 main =
-    Html.program
+    Html.programWithFlags
         { init =
-            ( initialState
-            , Task.perform NewDate Date.now
-            )
+            \url ->
+                ( init url
+                , Task.perform NewDate Date.now
+                )
         , view = view
         , update = update
         , subscriptions = always Sub.none

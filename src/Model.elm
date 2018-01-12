@@ -1,4 +1,4 @@
-module Model exposing (CalcParams, Model, fromBase64, initialCalcParams, initialState, toBase64)
+module Model exposing (CalcParams, Model, fromBase64, init, initialCalcParams, initialState, toBase64)
 
 import Base64 as B64
 import Date
@@ -37,6 +37,16 @@ initialCalcParams =
     , contributionGrowthRate = 0
     , compoundingPerYear = 1
     }
+
+
+init : String -> Model
+init s =
+    case fromBase64 s of
+        Ok m ->
+            m
+
+        Err _ ->
+            initialState
 
 
 initialState : Model
