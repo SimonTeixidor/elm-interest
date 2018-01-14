@@ -35,9 +35,6 @@ html {
 	}
 }
 
-@media screen and (max-width: 1000px) {
-}
-
 .row {
 	width: 100%;
 	display: flex;
