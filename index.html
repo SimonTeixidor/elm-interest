@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" /> 
+    <title>growing.cash</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html{box-sizing:border-box}*,*:before,*:after{box-sizing:inherit}.input-box{float:left;margin-right:1em;padding:.3em;width:11em}.input-box label,.input-box input,.input-box select{display:block;width:100%}.input-box input,.input-box select{height:2rem}#chart{height:20em}@media screen and (max-width:500px){.input-box{margin:0;padding:0;width:100%}input,select{padding:5px;margin:0}#chart{height:10em}}.row{width:100%;display:flex;flex-wrap:wrap}#header a{padding-right:1em}h1 img{height:2em;display:block;margin:auto}#header{text-align:center}h1{text-align:center}h1,h2,h3{font-family:Georgia,serif;font-variant:small-caps;text-transform:none;font-weight:100;margin-bottom:.2em}body{margin:0 auto;max-width:40em;font-family:'Georgia','Cambria',serif;font-size:1.3em;color:#4e443c;border-style:solid;border-color:transparent;border-width:0 .5em 1em .5em}a{text-decoration:none}.ct-series-a .ct-point{stroke-width:0}.sub-header{margin-top:0;margin-bottom:.5em}.ct-label{fill:rgba(0,0,0,0.4);color:rgba(0,0,0,0.4);font-size:.75rem;line-height:1}.ct-chart-line .ct-label,.ct-chart-bar .ct-label{display:block;display:-webkit-box;display:-moz-box;display:-ms-flexbox;display:-webkit-flex;display:flex}.ct-grid{stroke:rgba(0,0,0,0.2);stroke-width:1px;stroke-dasharray:2px}.ct-line{fill:none;stroke-width:4px}.ct-series-a .ct-point,.ct-series-a .ct-line{stroke:#d70206}</style>
+    <script async src="bundle.js" onload="initElm(); initPlot();"></script>
+    <meta name="description" content="An interactive compounding interest calculator.">
+    <meta name="keywords" content="interest,compounding,saving,finance,retirement">
+    <meta name="author" content="Simon Persson">
+  </head>
+  <body>
+    <div id="header">
+      <h1>
+        <img src="logo.png" alt="Plant growing dollar bills."/>
+	growing.cash
+      </h1>
+      <h3 class="sub-header">
+	A compounding interest calculator.
+      </h3>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="row">
+	    <h2>Settings</h2> 
+	    <p>These parameters determine the final balance. By adding multiple 
+	    configurations with the plus button, it is possible to change the 
+	    parameters over time (e.g, save 100 EUR per month for 10 years, 
+	    then 150 per month for 10 years).</p>
+    </div>
+    <div id="main-app">
+    </div>
+    <div id="chart"></div>
+    <section id="about">
+      <h2>About</h2>
+      <p>I made this tool to demonstrate the power of compounding interest, and
+      to practice reactive web development.</p>
+      <h3>Interesting Observations</h3>
+      <p>How early you start saving has a great impact on the final balance.
+      Assuming 7% inflation adjusted returns, and a working career of 40 years, a person who saves
+      for <a href="/?q=eyJmIjp7ImkiOjEsImEiOjcsInkiOjEwLCJiIjoxMDAsImMiOjAsImQiOjF9LCJpIjowLCJwIjpbeyJpIjo0LCJhIjo3LCJ5IjozMCwiYiI6MCwiYyI6MCwiZCI6MX1dLCJzIjpmYWxzZSwidSI6NH0">for 10 years, then saves nothing</a>
+      is better off than a person who saves
+      <a href="/?q=eyJmIjp7ImkiOjEsImEiOjcsInkiOjEwLCJiIjowLCJjIjowLCJkIjoxfSwiaSI6MCwicCI6W3siaSI6MiwiYSI6NywieSI6MzAsImIiOjEwMCwiYyI6MCwiZCI6MX1dLCJzIjpmYWxzZSwidSI6Mn0">nothing for 10 years, then saves for 30 years</a>!</p>
+      <p>With a lower return of 3.5%
+      <a href="/?q=eyJmIjp7ImkiOjEsImEiOjMuNSwieSI6MTQsImIiOjEwMCwiYyI6MCwiZCI6MX0sImkiOjAsInAiOlt7ImkiOjQsImEiOjMuNSwieSI6MjYsImIiOjAsImMiOjAsImQiOjF9XSwicyI6ZmFsc2UsInUiOjR9">14 years of saving</a> beats
+      <a href="/?q=eyJmIjp7ImkiOjEsImEiOjMuNSwieSI6MTQsImIiOjAsImMiOjAsImQiOjF9LCJpIjowLCJwIjpbeyJpIjoyLCJhIjozLjUsInkiOjI2LCJiIjoxMDAsImMiOjAsImQiOjF9XSwicyI6ZmFsc2UsInUiOjJ9">26 years of saving</a>.</p>
+
+      <h3>Technology</h3>
+      <p>The application is written in the Elm programming language, and is available as free
+      software on <a href="https://github.com/SimonPersson/elm-interest">GitHub</a>.</p>
+    </section>
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>This site was developed by
+      <a href="&#109;&#97;&#105;&#x6c;&#x74;&#111;&#58;&#115;&#x69;&#109;&#111;&#110;&#x40;&#102;&#108;&#x61;&#115;&#107;&#x70;&#x6f;&#x73;&#116;&#46;&#109;&#101;">Simon Persson</a>.</p>
+    </section>
+  </body>
+</html>
