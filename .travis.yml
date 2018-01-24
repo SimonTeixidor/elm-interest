@@ -30,7 +30,7 @@ script:
     fi
   - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-test
   - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-make src/Main.elm --output=static/elm.js --yes
-  - uglifyjs static/script.js static/chartist.min.js static/elm.js > out/bundle.js
+  - uglifyjs -mc 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9"' static/script.js static/chartist.min.js static/elm.js > out/bundle.js
   - sed '/bundle.css/c\'"<style>`uglifycss static/style.css static/chartist.css`</style>" static/index.html > out/index.html
   - cp static/logo.png static/favicon.ico static/CNAME out/
 
