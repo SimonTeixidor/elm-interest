@@ -25,3 +25,5 @@ tags
 static/elm.js
 static/elm.min.js
 .elm-static-html
+
+static/bundle*
