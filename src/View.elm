@@ -90,7 +90,8 @@ calcParamsView showAdvanced params =
                               in
                               select [ onInput (NewParam params.id << CompoundPerYear) ]
                                 [ option (attrs 1) [ text "Yearly" ]
-                                , option (attrs 6) [ text "Semi Anually" ]
+                                , option (attrs 2) [ text "Semi Anually" ]
+                                , option (attrs 4) [ text "Quarterly" ]
                                 , option (attrs 12) [ text "Monthly" ]
                                 , option (attrs 365) [ text "Daily" ]
                                 ]
