@@ -24,11 +24,7 @@ view model =
             FormatNumber.format { frenchLocale | decimals = 2 } finalNumber
     in
     div []
-        [ div [ class "row" ]
-            ([ h2 [] [ text "Settings" ] ]
-                ++ List.map (p [] << List.singleton << text) settingsIntro
-            )
-        , div []
+        [ div []
             (h3 [ onClick AddParamGroup ] [ text "+ First:" ]
                 :: List.concatMap
                     (\p ->
@@ -59,7 +55,7 @@ calcParamsView showAdvanced params =
             -- Principal is only showed for the first form
             (if params.id == initialCalcParams.id then
                 [ div [ class "input-box" ]
-                    [ label [] [ text "Starting Principal:" ]
+                    [ label [] [ text "Principal:" ]
                     , input [ placeholder <| toString initialState.initialPrincipal ++ " EUR", onInput Principal ] []
                     ]
                 ]
@@ -108,9 +104,3 @@ calcParamsView showAdvanced params =
         List.map2 (\i node -> ( toString i ++ "-" ++ toString params.id, node ))
             (List.range 0 <| List.length form)
             form
-
-
-settingsIntro : List String
-settingsIntro =
-    [ "These parameters determine the final balance. By adding multiple configurations with the plus button, it is possible to change the parameters over time (e.g, save 100 EUR per month for 10 years, then 150 for 10 years)."
-    ]

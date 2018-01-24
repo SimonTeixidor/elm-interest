@@ -92,3 +92,8 @@ a {
 .ct-series-a .ct-point {
   stroke-width: 0;
 }
+
+.sub-header {
+	margin-top: 0;
+	margin-bottom: 0.5em;
+}

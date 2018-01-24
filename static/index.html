@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" /> 
-    <title>Calculate compounding interest</title>
+    <title>growing.cash</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="bundle.css">
     <script async src="bundle.js" onload="initElm(); initPlot();"></script>
@@ -14,23 +14,35 @@
     <div id="header">
       <h1>
         <img src="logo.png" alt="Plant growing dollar bills."/>
-	Calculate compounding interest
+	growing.cash
       </h1>
+      <h3 class="sub-header">
+	A compounding interest calculator.
+      </h3>
       <a href="#about">About</a>
       <a href="#contact">Contact</a>
+    </div>
+    <div class="row">
+	    <h2>Settings</h2> 
+	    <p>These parameters determine the final balance. By adding multiple 
+	    configurations with the plus button, it is possible to change the 
+	    parameters over time (e.g, save 100 EUR per month for 10 years, 
+	    then 150 per month for 10 years).</p>
     </div>
     <div id="main-app">
     </div>
     <div id="chart"></div>
     <section id="about">
       <h2>About</h2>
-      <p>I made this tool to demonstrate the power of compounding interest, and to teach myself about reactive web development.</p>
-      <h3>Interesting Cases</h3>
-      <p>Assuming an inflation adjusted return of 7%, around the average return for the stock market,
-      <a href="/?q=eyJmIjp7ImkiOjEsImEiOjcsInkiOjEwLCJiIjoxMDAsImMiOjAsImQiOjF9LCJpIjowLCJwIjpbeyJpIjo0LCJhIjo3LCJ5IjozMCwiYiI6MCwiYyI6MCwiZCI6MX1dLCJzIjpmYWxzZSwidSI6NH0">a person who saves 100 per month for 10 years, then saves nothing for 30 years</a>
-      is better off than
-      <a href="/?q=eyJmIjp7ImkiOjEsImEiOjcsInkiOjEwLCJiIjowLCJjIjowLCJkIjoxfSwiaSI6MCwicCI6W3siaSI6MiwiYSI6NywieSI6MzAsImIiOjEwMCwiYyI6MCwiZCI6MX1dLCJzIjpmYWxzZSwidSI6Mn0">a person who saves nothing for 10 years, then saves 100 per month for 30 years</a>!</p>
-      <p>With a lower return of 3.5%, roughly what we can expect on bonds,
+      <p>I made this tool to demonstrate the power of compounding interest, and
+      to practice reactive web development.</p>
+      <h3>Interesting Observations</h3>
+      <p>How early you start saving has a great impact on the final balance.
+      Assuming 7% inflation adjusted returns, and a working career of 40 years, a person who saves
+      for <a href="/?q=eyJmIjp7ImkiOjEsImEiOjcsInkiOjEwLCJiIjoxMDAsImMiOjAsImQiOjF9LCJpIjowLCJwIjpbeyJpIjo0LCJhIjo3LCJ5IjozMCwiYiI6MCwiYyI6MCwiZCI6MX1dLCJzIjpmYWxzZSwidSI6NH0">for 10 years, then saves nothing</a>
+      is better off than a person who saves
+      <a href="/?q=eyJmIjp7ImkiOjEsImEiOjcsInkiOjEwLCJiIjowLCJjIjowLCJkIjoxfSwiaSI6MCwicCI6W3siaSI6MiwiYSI6NywieSI6MzAsImIiOjEwMCwiYyI6MCwiZCI6MX1dLCJzIjpmYWxzZSwidSI6Mn0">nothing for 10 years, then saves for 30 years</a>!</p>
+      <p>With a lower return of 3.5%
       <a href="/?q=eyJmIjp7ImkiOjEsImEiOjMuNSwieSI6MTQsImIiOjEwMCwiYyI6MCwiZCI6MX0sImkiOjAsInAiOlt7ImkiOjQsImEiOjMuNSwieSI6MjYsImIiOjAsImMiOjAsImQiOjF9XSwicyI6ZmFsc2UsInUiOjR9">14 years of saving</a> beats
       <a href="/?q=eyJmIjp7ImkiOjEsImEiOjMuNSwieSI6MTQsImIiOjAsImMiOjAsImQiOjF9LCJpIjowLCJwIjpbeyJpIjoyLCJhIjozLjUsInkiOjI2LCJiIjoxMDAsImMiOjAsImQiOjF9XSwicyI6ZmFsc2UsInUiOjJ9">26 years of saving</a>.</p>
 
