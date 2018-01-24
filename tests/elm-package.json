@@ -5,7 +5,6 @@
     "license": "GPLv3",
     "source-directories": [
         "../src",
-	"../lines/src",
         "."
     ],
     "exposed-modules": [],
@@ -19,15 +18,7 @@
         "rluiten/elm-date-extra": "9.2.0 <= v < 10.0.0",
         "terezka/elm-plot": "5.1.0 <= v < 6.0.0",
 	"NoRedInk/elm-decode-pipeline": "3.0.0 <= v < 4.0.0",
-	"truqu/elm-base64": "2.0.2 <= v < 3.0.0",
-
-
-        "debois/elm-dom": "1.2.3 <= v < 2.0.0",
-        "elm-lang/svg": "2.0.0 <= v < 3.0.0",
-        "eskimoblood/elm-color-extra": "5.0.0 <= v < 6.0.0",
-        "justinmimbs/elm-date-extra": "2.0.3 <= v < 3.0.0",
-        "mgold/elm-date-format": "1.4.2 <= v < 2.0.0",
-        "myrho/elm-round": "1.0.0 <= v < 2.0.0"
+	"truqu/elm-base64": "2.0.2 <= v < 3.0.0"
     },
     "elm-version": "0.18.0 <= v < 0.19.0"
 }

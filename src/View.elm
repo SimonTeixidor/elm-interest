@@ -9,7 +9,6 @@ import Html.Events exposing (onCheck, onClick, onInput)
 import Html.Keyed as Keyed
 import Model exposing (CalcParams, Model, initialCalcParams, initialState)
 import Msg exposing (Msg(..), ParamUpdate(..))
-import Plot exposing (lineChart)
 
 
 view : Model -> Html Msg
@@ -49,9 +48,7 @@ view model =
                 ]
             ]
         , div [ class "row" ]
-            [ h3 [] [ text <| "Final balance: " ++ formattedBalance ]
-            ]
-        , lineChart dataPoints
+            [ h3 [] [ text <| "Final balance: " ++ formattedBalance ] ]
         ]
 
 

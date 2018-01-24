@@ -1,7 +1,9 @@
 module Update exposing (update)
 
+import AccumulatedInterest exposing (accumulatedInterest)
 import Model exposing (CalcParams, Model, initialCalcParams, toBase64)
 import Msg exposing (Msg(..), ParamUpdate(..))
+import Plot exposing (lineChart)
 
 
 updateParamId : Int -> (CalcParams -> CalcParams) -> List CalcParams -> List CalcParams
@@ -18,13 +20,13 @@ updateParamId id f =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
-        ( newModel, action ) =
+        newModel =
             case msg of
                 NewParam id paramUpdate ->
                     if id == model.firstParam.id then
-                        ( { model | firstParam = updateCalcParams paramUpdate model.firstParam }, Cmd.none )
+                        { model | firstParam = updateCalcParams paramUpdate model.firstParam }
                     else
-                        ( { model | parameters = updateParamId id (updateCalcParams paramUpdate) model.parameters }, Cmd.none )
+                        { model | parameters = updateParamId id (updateCalcParams paramUpdate) model.parameters }
 
                 AddParamGroup ->
                     let
@@ -34,36 +36,30 @@ update msg model =
                         newId =
                             model.uid + 1
                     in
-                    ( { model | parameters = params ++ [ { initialCalcParams | id = newId } ], uid = newId }
-                    , Cmd.none
-                    )
+                    { model | parameters = params ++ [ { initialCalcParams | id = newId } ], uid = newId }
 
                 RemoveParamGroup i ->
                     let
                         params =
                             model.parameters
                     in
-                    ( { model | parameters = List.filter ((/=) i << .id) params }
-                    , Cmd.none
-                    )
+                    { model | parameters = List.filter ((/=) i << .id) params }
 
                 Principal s ->
-                    ( case String.toFloat s of
+                    case String.toFloat s of
                         Ok f ->
                             { model | initialPrincipal = f }
 
                         Err e ->
                             model
-                    , Cmd.none
-                    )
 
                 NewDate d ->
-                    ( { model | currentDate = d }, Cmd.none )
+                    { model | currentDate = d }
 
                 ShowAdvanced b ->
-                    ( { model | showAdvanced = b }, Cmd.none )
+                    { model | showAdvanced = b }
     in
-    ( { newModel | shareLink = toBase64 newModel }, action )
+    ( { newModel | shareLink = toBase64 newModel }, lineChart newModel )
 
 
 updateCalcParams : ParamUpdate -> CalcParams -> CalcParams

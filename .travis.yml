@@ -31,7 +31,7 @@ script:
   - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-test
   - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 elm-make src/Main.elm --output=out/elm.js --yes
   - cat static/intro.html static/style.css static/outro.html > out/index.html
-  - cp static/favicon.ico static/logo.png static/CNAME out/
+  - cp static/chartist.min.js static/chartist.min.css static/logo.png static/favicon.ico static/CNAME out/
 
 deploy:
   provider: pages
