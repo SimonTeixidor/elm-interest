@@ -48,7 +48,12 @@
               if(value.toString().length < 6) {
                 return value;
               } else {
-                return value.toExponential(0);
+                var retVal = "";
+                var significant = 0;
+                while(retVal.length < 5) {
+                  retVal = value.toExponential(significant++);
+                }
+                return retVal;
               }
             }
           }
